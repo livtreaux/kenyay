@@ -458,21 +458,15 @@ const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({eggs:st.eggs,pts:st
 if(st.done>0){$('#go0').insertAdjacentHTML('afterend',' <button class="b" id="cont" data-v="Continue my journey" style="background:var(--clay);box-shadow:0 0 0 3px var(--clay),0 6px 0 #7d2a0c">Continue my journey</button>');$('#cont').onclick=()=>secmap(st.sec)}
 $$('.an').forEach(e=>e.innerHTML='');paint();
 </script>
-<script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
+<script src="https://coze.com"></script>
 <script>
   new CozeWebSDK.WebChatClient({
     config: {
       bot_id: '7701695514894647349',
+      isIframe: true,
     },
     componentProps: {
-      title: 'Coze',
-    },
-    auth: {
-      type: 'token',
-      token: 'pat_********',
-      onRefreshToken: function () {
-        return 'pat_********'
-      }
+      title: 'Turi the Lion',
     }
   });
 </script>
