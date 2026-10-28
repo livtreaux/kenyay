@@ -1,0 +1,460 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>KenyAI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Lilita+One&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--g:#1B6B35;--btn:#1B6B35;--sand:#FFF4DA;--sun:#F5A623;--clay:#C8481A;--ink:#3A2410;--card:#fff;--par:#F5E2B0;box-sizing:border-box}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--g:#8FE0A2;--sand:#18221A;--ink:#F3E4C4;--card:#243326;--par:#3B3A22}}
+:root[data-theme=dark]{--g:#8FE0A2;--sand:#18221A;--ink:#F3E4C4;--card:#243326;--par:#3B3A22}
+html,body{height:100%;margin:0}
+body{font:600 clamp(17px,2.1vw,21px)/1.45 'Baloo 2',system-ui,sans-serif;color:var(--g);background:var(--sand);overflow:hidden}
+.scr{position:fixed;inset:0;display:none;flex-direction:column;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 14px) 16px calc(env(safe-area-inset-bottom,0px) + 18px);background:linear-gradient(180deg,var(--sand) 55%,#FFD98A22)}
+.scr.on{display:flex;animation:in .5s ease}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+h1,h2,h3{font-family:'Lilita One','Baloo 2',sans-serif;font-weight:400;margin:0;color:var(--g);letter-spacing:.01em}
+h1{font-size:clamp(46px,10vw,100px);line-height:.95;text-shadow:3px 3px 0 var(--sun)}
+h2{font-size:clamp(30px,5vw,48px);text-shadow:2px 2px 0 var(--sun)}
+.sub{font-family:'Lilita One',sans-serif;font-size:clamp(22px,4vw,34px);color:var(--clay)}
+p{margin:.4em 0}
+.b{font:800 1.05em 'Baloo 2',sans-serif;min-height:52px;padding:8px 26px;border-radius:30px;border:4px solid #fff;background:var(--btn);color:#fff;box-shadow:0 0 0 3px var(--btn),0 6px 0 #0E3F1D;cursor:pointer;transition:transform .15s}
+.b:hover{transform:translateY(-2px)}.b:active{transform:translateY(3px)}
+.b:focus-visible,.opt:focus-visible,.egg:focus-visible,#mu:focus-visible{outline:4px solid var(--sun);outline-offset:3px}
+.b[disabled]{opacity:.45;cursor:default}
+.hero{margin:auto;width:100%;max-width:1100px;display:grid;gap:18px;align-items:center}
+@media(min-width:820px){.hero{grid-template-columns:1.1fr .9fr}}
+.sun{position:relative;display:grid;place-items:center}
+.sun:before{content:"";position:absolute;width:88%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#FFC24A,#FF9A3C);opacity:.85}
+.an{position:relative;width:min(58vw,300px);cursor:pointer}
+.an.sm{width:min(32vw,150px)}
+.an svg{display:block;width:100%;overflow:visible;transform-origin:50% 92%;animation:bob 3.2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) scale(1.015)}}
+.eyes{transform-box:fill-box;transform-origin:center;animation:bl 4.5s infinite}
+@keyframes bl{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.ear{transform-box:fill-box;transform-origin:50% 85%;animation:ew 5s infinite}.e2{animation-delay:1.7s}
+@keyframes ew{0%,88%,100%{transform:rotate(0)}92%{transform:rotate(-12deg)}96%{transform:rotate(6deg)}}
+.mouth{transform-box:fill-box;transform-origin:50% 15%;transform:scaleY(.05)}
+.talk .mouth{animation:mo .24s ease-in-out infinite alternate}
+@keyframes mo{to{transform:scaleY(1)}}
+.talk svg{animation:sw .7s ease-in-out infinite alternate}
+@keyframes sw{from{transform:rotate(-3deg)}to{transform:rotate(3deg) translateY(-5px)}}
+.brow{transition:transform .2s}.talk .brow{transform:translateY(-4px)}
+.jump svg{animation:jp .85s ease-out}
+@keyframes jp{0%{transform:scale(1.1,.9)}35%{transform:translateY(-70px) scale(.95,1.08)}70%{transform:none scale(1.08,.92)}100%{transform:none}}
+.bub{position:relative;background:var(--card);color:var(--ink);border:4px solid var(--g);border-radius:26px;padding:14px 18px;font-weight:600;min-height:3.2em;box-shadow:0 5px 0 var(--g)}
+.row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.row .bub{flex:1 1 240px}
+.card{background:var(--card);color:var(--ink);border-radius:28px;padding:18px;border:4px solid var(--sun);box-shadow:0 6px 0 var(--sun)}
+.q{font:400 clamp(26px,4.5vw,38px)/1.2 'Lilita One',sans-serif;color:var(--g);margin:6px 0 14px}
+.opts{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.opt{font:800 1.1em 'Baloo 2',sans-serif;color:var(--ink);background:var(--card);border:4px solid var(--g);border-radius:22px;padding:14px;min-height:64px;cursor:pointer;box-shadow:0 5px 0 var(--g);transition:transform .15s,background .2s}
+.opt:nth-child(2){border-color:var(--sun);box-shadow:0 5px 0 var(--sun)}.opt:nth-child(3){border-color:var(--clay);box-shadow:0 5px 0 var(--clay)}
+.opt:hover{transform:translateY(-2px)}.opt.pk{background:#FFE7A8;color:#3A2410}
+.prog{font-weight:800;color:var(--clay)}
+.rm{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;flex:1;gap:0;margin:0 -16px;scrollbar-width:none}.rm::-webkit-scrollbar{display:none}
+.pg{flex:0 0 100%;scroll-snap-align:start;overflow-y:auto;padding:4px 16px 8px}
+.map{background:var(--par);color:var(--ink);border-radius:30px;padding:18px 22px;margin-top:12px;border:4px dashed #B9792B}
+.map ol{list-style:none;margin:0;padding:0}
+.map li{position:relative;padding:8px 0 8px 54px;font-weight:800}
+.map li:before{content:"";position:absolute;left:19px;top:34px;bottom:-16px;border-left:4px dotted #B9792B}.map li:last-child:before{display:none}
+.map li i{position:absolute;left:0;top:6px;width:40px;height:40px;border-radius:50%;background:var(--clay);color:#fff;display:grid;place-items:center;font:400 22px 'Lilita One',sans-serif;font-style:normal;box-shadow:0 3px 0 #7d2a0c}
+.map li.t i{background:var(--sun);color:#3A2410}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:8px}
+.dots span{display:inline-block;width:14px;height:14px;border-radius:50%;background:#B9792B55;margin:0 4px}.dots .on{background:var(--clay)}
+#mu{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);right:10px;z-index:9;min-height:44px;min-width:44px;padding:4px 14px;border-radius:24px;border:3px solid var(--g);background:var(--card);color:var(--g);font:800 15px 'Baloo 2',sans-serif;cursor:pointer}
+#bk{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);right:10px;z-index:9;background:var(--clay);color:#fff;border:4px solid #fff;border-radius:30px;padding:6px 16px;font:400 22px 'Lilita One',sans-serif;display:none;box-shadow:0 4px 0 #7d2a0c}
+.eggs{display:flex;flex-wrap:wrap;gap:14px;margin:12px 0}
+.egg{font-size:58px;background:none;border:0;cursor:pointer;animation:wob 1.4s ease-in-out infinite}
+@keyframes wob{25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+.gift{display:flex;align-items:center;gap:10px;background:var(--card);color:var(--ink);border:3px solid var(--sun);border-radius:22px;padding:8px 12px;animation:in .4s}.gift span{font-size:40px}
+.tag{display:inline-block;background:var(--sun);color:#3A2410;border-radius:20px;padding:2px 14px;font-weight:800}
+.tree{position:fixed;left:0;right:0;bottom:0;height:90px;pointer-events:none;opacity:.9}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.scr{background:transparent!important;z-index:1}
+.scr{padding-top:calc(env(safe-area-inset-top,0px) + 58px)}
+#bg{position:fixed;inset:0;z-index:0;width:100%;height:100%;opacity:.6;pointer-events:none}
+.cl{animation:dr 80s linear infinite}.c2{animation-duration:110s;animation-delay:-50s}.c3{animation-duration:140s;animation-delay:-90s}
+@keyframes dr{from{transform:translateX(-400px)}to{transform:translateX(1500px)}}
+.lf{transform-origin:0 0;animation:rs 4.5s ease-in-out infinite alternate}.lf.r{transform-origin:100% 0;animation-delay:-2s}.lf.b{transform-origin:50% 100%;transform-box:fill-box;animation-delay:-1s}
+@keyframes rs{from{transform:rotate(-2.5deg)}to{transform:rotate(3deg)}}
+.an{width:min(52vw,250px);margin-bottom:38px}.an.sm{width:min(36vw,150px)}
+.hero{grid-template-columns:1fr}@media(min-width:820px){.hero{grid-template-columns:1fr 1fr}}
+.hero .an{width:min(48vw,21vh,260px)}@media(min-width:820px){.hero .an{width:min(26vw,36vh,300px)}}
+.lb{display:flex;flex-direction:column;align-items:center;gap:12px}.lb .bub{max-width:460px;width:100%}
+.sun:before{display:none}
+.an svg ellipse,.an svg circle,.an svg rect{stroke:#5b3a1e;stroke-opacity:.5;stroke-width:2}
+.cm{position:absolute;left:50%;bottom:-40px;transform:translateX(-50%);font:800 16px 'Baloo 2',sans-serif;background:var(--sun);color:#3A2410;border:3px solid #fff;border-radius:22px;padding:2px 16px;min-height:44px;cursor:pointer;animation:pu 1.6s ease-in-out infinite;box-shadow:0 3px 0 #b9770f;white-space:nowrap}
+@keyframes pu{50%{transform:translateX(-50%) scale(1.08)}}
+.mouth{transform:scaleY(var(--m,.05));transition:transform .08s}
+.talk .mouth{animation:none!important;transform:scaleY(var(--m,.05))}
+.talk svg{animation:sw2 1.6s ease-in-out infinite alternate}
+@keyframes sw2{from{transform:rotate(-1.2deg)}to{transform:rotate(1.2deg) translateY(-3px)}}
+.tail{transform-box:fill-box;transform-origin:0 50%;animation:tw 2.4s ease-in-out infinite alternate}@keyframes tw{to{transform:rotate(14deg)}}
+.bd{transform-box:fill-box;transform-origin:50% 100%;animation:br 3.2s ease-in-out infinite}@keyframes br{50%{transform:scaleY(1.025)}}
+.in{flex:1 1 200px;font:800 1em 'Baloo 2',sans-serif;min-height:52px;padding:6px 16px;border:4px solid var(--g);border-radius:22px;background:var(--card);color:var(--ink)}
+.in:focus-visible{outline:4px solid var(--sun)}
+label{font-weight:800}
+.an svg ellipse,.an svg circle,.an svg rect{stroke:none}
+.mouth{transform-origin:50% 0%}
+.gfx{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:12px}
+.big{font:400 clamp(60px,16vw,110px)/1 'Lilita One',sans-serif;color:var(--clay);animation:pop .6s ease}@keyframes pop{from{transform:scale(.3);opacity:0}}
+.chips span{display:inline-block;background:var(--par);color:var(--ink);border-radius:20px;padding:4px 14px;margin:3px;font-weight:800}
+@keyframes dw{to{stroke-dashoffset:0}}
+.vo{position:fixed;inset:0;z-index:30;background:rgba(20,40,20,.55);display:none;padding:16px;overflow:auto}.vo.on{display:flex}
+.vbar{height:14px;border-radius:8px;background:#B9792B44;margin:10px 0}.vbar i{display:block;height:100%;width:0;background:var(--clay);border-radius:8px;transition:width .4s}
+#hm{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:10px;z-index:9;min-height:44px;padding:4px 14px;border-radius:24px;border:3px solid var(--g);background:var(--card);color:var(--g);font:800 15px 'Baloo 2',sans-serif;cursor:pointer}
+#fq,#wv{display:none!important}
+.hp,.br{opacity:0;transition:opacity .2s,transform .2s}.happy .hp{opacity:1}.happy .eyes{opacity:0}.oops .br{opacity:1;transform:translateY(-6px)}
+.oops svg{animation:tilt 1.2s ease-in-out 2}@keyframes tilt{50%{transform:rotate(-5deg) translateY(2px)}}
+.opt.idk{border-style:dashed;background:transparent;font-weight:600}
+.trw{position:relative;width:min(80vw,300px);aspect-ratio:1;margin:0 auto 12px;background:#fff;border-radius:20px;border:4px solid var(--sun)}.trw canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+</style></head><body>
+<svg id="bg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD58A"/><stop offset="1" stop-color="#FFF4DA"/></linearGradient></defs>
+<rect width="1200" height="800" fill="url(#sk)"/><circle cx="930" cy="170" r="110" fill="#FFC24A" opacity=".35"/><circle cx="930" cy="170" r="70" fill="#FFB02E"/>
+<g class="cl"><ellipse cx="200" cy="130" rx="90" ry="26" fill="#fff"/><ellipse cx="262" cy="114" rx="60" ry="28" fill="#fff"/></g>
+<g class="cl c2"><ellipse cx="600" cy="230" rx="110" ry="28" fill="#fff"/><ellipse cx="660" cy="210" rx="64" ry="28" fill="#fff"/></g>
+<g class="cl c3"><ellipse cx="900" cy="60" rx="70" ry="20" fill="#fff"/></g>
+<path class="cl c2" d="M700 150q10-12 20 0q10-12 20 0M740 180q8-10 16 0q8-10 16 0" stroke="#6B4A2A" fill="none" stroke-width="3"/>
+<path d="M0 520Q200 440 420 510T800 500T1200 470V800H0Z" fill="#E7C57A"/><path d="M0 600Q300 540 600 600T1200 580V800H0Z" fill="#C5B05E"/>
+<rect x="170" y="380" width="14" height="200" fill="#6B4A2A"/><ellipse cx="177" cy="380" rx="125" ry="34" fill="#4B7A3A"/><ellipse cx="150" cy="362" rx="80" ry="24" fill="#5E9244"/>
+<rect x="1030" y="430" width="12" height="160" fill="#6B4A2A"/><ellipse cx="1036" cy="430" rx="95" ry="28" fill="#4B7A3A"/><ellipse cx="1060" cy="414" rx="60" ry="20" fill="#5E9244"/>
+<path d="M0 800V700Q300 650 600 700T1200 680V800Z" fill="#7BA44A"/>
+<g fill="#3F7A3A"><path class="lf" d="M0 0Q90 30 130 130Q60 90 0 60Z"/><path class="lf" d="M0 0Q40 60 30 160Q-10 100 0 0Z" fill="#5E9244"/><path class="lf r" d="M1200 0Q1110 30 1070 130Q1140 90 1200 60Z"/><path class="lf r" d="M1200 0Q1160 60 1170 160Q1210 100 1200 0Z" fill="#5E9244"/><path class="lf b" d="M60 800Q70 700 110 670Q100 740 60 800Z"/><path class="lf b" d="M130 800Q150 720 200 700Q180 760 130 800Z" fill="#5E9244"/><path class="lf b" d="M1100 800Q1090 710 1050 680Q1060 750 1100 800Z"/></g></svg>
+<button id="hm" aria-label="Back to camp" style="display:none">Back to camp</button><button id="mu" aria-label="Music on or off">Music: off</button>
+<div id="bk" aria-live="polite"></div>
+
+<section class="scr on" id="s0"><div class="hero">
+ <div><span class="tag">Safari school for little explorers</span>
+ <h1>KenyAI</h1><div class="sub" style="margin:.2em 0">Kenya Accelerates Intelligence</div>
+ <h2 style="margin:.1em 0 .5em">Internalize. Interpret. Impart.</h2>
+ 
+ <p style="margin-top:20px"><button class="b" data-v="Start" id="go0">click start to see what learning journey awaits you!</button></p></div>
+ <div class="lb"><div class="bub" data-a="lion">Jambo, little explorer! I’m Turi the lion. Welcome to Kenyai! Every day, a few small adventures will help you read, speak and shine. Click me, or press start, to see the trail!</div><div class="an" data-a="lion"></div></div></div></section>
+
+<section class="scr" id="s1"><h2>KenyAI: Kenya Accelerates Intelligence</h2><p>by <b>Internalize</b> (acquiring knowledge), <b>Interpret</b> (explaining the meaning of what we see and hear) and <b>Impart</b> (making information known to others). Swipe to follow the treasure trail.</p>
+ <div class="rm" id="rm"></div>
+ <div class="nav"><button class="b" id="pv" data-v="Back">Back</button><div class="dots" id="dt"></div><button class="b" id="nx" data-v="Next">Next</button></div></section>
+
+<section class="scr" id="s2"><div class="row"><div class="an sm" data-a="lion"></div><div class="bub" data-a="lion"></div></div>
+ <div class="card" style="margin-top:16px"><div class="prog" id="pr"></div><div id="qb"></div></div></section>
+
+<section class="scr" id="s3"><div class="hero"><div><h2>Your trail begins here!</h2><div class="bub" data-a="lion" id="rb"></div>
+ <p style="margin-top:18px"><button class="b" data-v="Start" id="go3">Start</button></p></div><div class="sun"><div class="an" data-a="lion"></div></div></div></section>
+
+<section class="scr" id="s4"><div class="row"><div class="an sm" id="ma"></div><div><span class="tag" id="mt"></span><h2 id="mh"></h2></div></div>
+ <div class="bub" id="mb" style="margin-top:12px"></div><div class="map" id="mm"></div>
+ <p style="margin-top:14px"><button class="b" data-v="Start lesson" id="go4">Start lesson 1</button> <button class="b" data-v="Watch a short video" id="wv" style="background:var(--clay);box-shadow:0 0 0 3px var(--clay),0 6px 0 #7d2a0c">Watch a short video</button> <button class="b" data-v="Next land" id="nl" style="display:none">Next land</button> <button class="b" data-v="Family quest done" id="fq" style="background:var(--clay);box-shadow:0 0 0 3px var(--clay),0 6px 0 #7d2a0c">A grown-up says: quest done!</button></p></section>
+
+<section class="scr" id="s5"><div class="row"><div class="an sm" id="la"></div><div class="bub" id="lb"></div></div>
+ <div class="card" style="margin-top:16px"><div class="prog" id="lp"></div><div id="lq"><button class="b" id="ln" data-v="Next">Next</button></div></div></section>
+
+<section class="scr" id="s6"><h2>Your surprise eggs</h2><div class="row"><div class="an sm" id="ea"></div><div class="bub" id="eb"></div></div>
+ <p id="sc" class="prog"></p><button class="b" data-v="Click an egg to crack it!" style="align-self:flex-start;background:var(--clay);box-shadow:0 0 0 3px var(--clay),0 6px 0 #7d2a0c">Click an egg to crack it!</button><div class="eggs" id="eg"></div><div class="eggs" id="gf"></div>
+ <p><button class="b" id="ct" data-v="Continue">Continue</button></p></section>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],ss='speechSynthesis' in window;
+const N={lion:'Turi',cow:'Yuri',leo:'Zuri',gir:'Kazi'};
+let cur='lion',st={eggs:0,pts:0,sec:0,done:0,fq:0},U=0,lastA=-1;
+function animalOld(t){const id='g'+(++U),P={lion:['#FAC96A','#C98429'],cow:['#FFFFFF','#CDC5B5'],leo:['#FAD06A','#D4962A'],gir:['#FAD98A','#D1A042']}[t],
+M={lion:'#FBE3B5',cow:'#F4B6B6',leo:'#FFF3D6',gir:'#FBE6B5'}[t],nz={lion:'#4A2410',cow:'#D98A8A',leo:'#6B3A3A',gir:'#7A4A22'}[t];
+const ear=(c,i)=>`<g class="ear"><circle cx="40" cy="54" r="22" fill="${c}"/><circle cx="40" cy="54" r="12" fill="${i}"/></g><g class="ear e2"><circle cx="160" cy="54" r="22" fill="${c}"/><circle cx="160" cy="54" r="12" fill="${i}"/></g>`;
+let b='',s='';
+if(t=='lion')b=`<circle cx="100" cy="106" r="94" fill="#9C4E17"/><circle cx="100" cy="110" r="84" fill="#C8702A"/>`+ear('#E5A24C','#F6C98C');
+if(t=='cow')b=`<path d="M52 46 Q36 14 20 24 Q34 30 44 56Z" fill="#F3E7C8"/><path d="M148 46 Q164 14 180 24 Q166 30 156 56Z" fill="#F3E7C8"/><g class="ear"><ellipse cx="26" cy="86" rx="26" ry="14" fill="#fff" transform="rotate(-20 26 86)"/></g><g class="ear e2"><ellipse cx="174" cy="86" rx="26" ry="14" fill="#2B2B2B" transform="rotate(20 174 86)"/></g>`,s=`<ellipse cx="62" cy="80" rx="27" ry="25" fill="#2B2B2B"/><ellipse cx="136" cy="56" rx="18" ry="12" fill="#2B2B2B"/>`;
+if(t=='leo')b=ear('#F0B84A','#E9A0A0'),s=[[60,70],[76,58],[130,60],[142,76],[100,48],[48,112],[152,112]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="#5A3510"/>`).join('');
+if(t=='gir')b=`<g class="ear"><ellipse cx="24" cy="80" rx="26" ry="12" fill="#E9B85E" transform="rotate(-20 24 80)"/></g><g class="ear e2"><ellipse cx="176" cy="80" rx="26" ry="12" fill="#E9B85E" transform="rotate(20 176 80)"/></g><rect x="72" y="20" width="9" height="36" rx="4" fill="#B9792B"/><circle cx="76" cy="19" r="8" fill="#6B4020"/><rect x="119" y="20" width="9" height="36" rx="4" fill="#B9792B"/><circle cx="124" cy="19" r="8" fill="#6B4020"/>`,s=[[62,68],[138,70],[100,50],[50,114],[150,114]].map(p=>`<ellipse cx="${p[0]}" cy="${p[1]}" rx="13" ry="10" fill="#B9792B" opacity=".8"/>`).join('');
+const eye=x=>`<ellipse cx="${x}" cy="100" rx="13" ry="15" fill="#fff"/><circle cx="${x+2}" cy="102" r="8.5" fill="#2B1B0E"/><circle cx="${x+5}" cy="98" r="3" fill="#fff"/>`;
+return `<svg viewBox="0 0 200 200" role="img" aria-label="${N[t]} the ${t=='leo'?'leopard':t=='gir'?'giraffe':t}"><defs><radialGradient id="${id}" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="${P[0]}"/><stop offset="1" stop-color="${P[1]}"/></radialGradient></defs><ellipse cx="100" cy="194" rx="58" ry="6" fill="#000" opacity=".15"/>${b}<ellipse cx="100" cy="112" rx="72" ry="68" fill="url(#${id})"/>${s}<ellipse cx="74" cy="62" rx="28" ry="13" fill="#fff" opacity=".28" transform="rotate(-25 74 62)"/><ellipse cx="100" cy="142" rx="38" ry="27" fill="${M}"/><circle cx="52" cy="128" r="9" fill="#F28B82" opacity=".45"/><circle cx="148" cy="128" r="9" fill="#F28B82" opacity=".45"/><g class="eyes">${eye(70)}${eye(130)}</g><path class="brow" d="M56 78Q70 69 84 78M116 78Q130 69 144 78" stroke="#3A2410" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="100" cy="126" rx="12" ry="8" fill="${nz}"/><g class="mouth"><ellipse cx="100" cy="153" rx="16" ry="13" fill="#7A1F2E"/><ellipse cx="100" cy="160" rx="9" ry="4" fill="#E8707A"/></g><path d="M80 146Q100 168 120 146" stroke="#5A2A18" stroke-width="4.5" fill="none" stroke-linecap="round"/></svg>`}
+function paint(){$$('.an[data-a]').forEach(e=>{if(!e.firstChild)e.innerHTML=animal(e.dataset.a)})}
+function setA(el,t){el.dataset.a=t;el.innerHTML=animal(t)}
+/* voices: pitch/rate give each friend a distinct voice; en-KE used when the device has it */
+const V={lion:[.6,.9],cow:[1.35,1],leo:[.8,1.04],gir:[1.18,.94]};let vs=[];
+if(ss){const l=()=>vs=speechSynthesis.getVoices();l();speechSynthesis.onvoiceschanged=l}
+const pv=g=>vs.find(v=>/en[-_]KE/i.test(v.lang))||vs.find(v=>/en[-_](ZA|NG|GB)/i.test(v.lang)&&(g?/fem|zira|susan|hazel|samantha|karen/i.test(v.name):/male|david|daniel|george|mark|ryan/i.test(v.name)))||vs.find(v=>/en[-_](ZA|NG|GB)/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang));
+function say(t,w,cb){const els=$$('.an[data-a="'+w+'"]'),on=x=>els.forEach(e=>e.classList.toggle('talk',x));let d=0;const fin=()=>{if(d)return;d=1;on(0);cb&&cb()};
+ if(!ss){on(1);setTimeout(fin,t.length*55);return}
+ speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t),v=pv(w=='cow'||w=='gir');if(v){u.voice=v;u.lang=v.lang}else u.lang='en-GB';
+ u.pitch=V[w][0];u.rate=V[w][1];u.onstart=()=>on(1);u.onend=fin;u.onerror=fin;setTimeout(()=>{if(!d&&!speechSynthesis.speaking)fin()},t.length*140+2500);speechSynthesis.speak(u)}
+function tell(w,t,cb){$$('.bub[data-a="'+w+'"]').forEach(b=>b.textContent=t);say(t,w,cb)}
+const jump=w=>$$('.an[data-a="'+w+'"]').forEach(e=>{e.classList.add('jump');setTimeout(()=>e.classList.remove('jump'),900)});
+/* sound: chime + soft synthesized safari groove (kalimba + drone + hand-drum) */
+let AC,mus=0,mt=0,stp=0,nt=0;
+function ac(){if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(C)AC=new C}if(AC&&AC.state=='suspended')AC.resume();return AC}
+function tone(f,t,d,v,ty){const o=AC.createOscillator(),g=AC.createGain();o.type=ty||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.05)}
+function chime(){if(!ac())return;const t=AC.currentTime;tone(784,t,.5,.05);tone(1175,t+.1,.6,.04)}
+const mel=[0,4,7,4,9,7,4,2,0,4,7,9,12,9,7,4];
+function tick(){if(!mus||!AC)return;const bs=.3125;if(nt<AC.currentTime)nt=AC.currentTime+.1;while(nt<AC.currentTime+.8){const m=mel[(stp>>1)%16];if(stp%2==0)tone(262*2**(m/12),nt,.9,.035,'triangle');if(stp%4==0)tone(70,nt,.25,.08);if(stp%4==3)tone(110,nt,.15,.03);if(stp%16==0)tone(131,nt,4,.02);stp++;nt+=bs}}
+function mu(on){mus=on;$('#mu').textContent='Music: '+(on?'on':'off');if(on){ac();nt=0;if(!mt)mt=setInterval(tick,250);tick()}}
+$('#mu').onclick=()=>{userMu=1;mu(!mus)};let userMu=0;
+addEventListener('pointerdown',()=>{if(!userMu&&!mus&&!window._m){window._m=1;mu(1)}},{once:true});
+document.addEventListener('click',e=>{const b=e.target.closest('button[data-v]');0});
+function show(id,w){$$('.scr').forEach(s=>s.classList.toggle('on',s.id==id));if(w)cur=w;$('#'+id).scrollTop=0;paint()}
+function eggsUI(){const k=$('#bk');k.style.display=st.eggs||st.pts?'block':'none';k.textContent='Basket: '+st.eggs+' egg'+(st.eggs==1?'':'s')}
+const OK=['Hapo ndipo! That’s it!','Wow, your brain is shining!','Sawa sawa! Lovely answer!','You got it, brave explorer!','Yes! Like an elephant, you remember everything!','Fantastic thinking!','Ding, ding! Very clever!','Mambo vipi? Brilliant!'],
+NO=['Thank you for trying! Every explorer learns by walking the trail. Let’s keep going.','I love how brave you are. Your brain grows stronger with every step!','Great effort! Let’s keep practising together, you are doing wonderfully.','Nice trying! The next one is waiting for you, and you are getting stronger.'];
+const pick=a=>{let i;do i=Math.floor(Math.random()*a.length);while(i==lastA&&a.length>1);lastA=i;return a[i]};
+function quiz(list,w,box,prog,done){let i=0,sc=[];(function nx(){if(i>=list.length)return done(sc);const q=list[i];prog.textContent='Question '+(i+1)+' of '+list.length;
+ const o=q.o.map((t,k)=>({t,c:k==0})).sort(()=>Math.random()-.5);box.innerHTML='<p class="q">'+q.p+'</p><div class="opts">'+o.map((x,k)=>'<button class="opt" data-k="'+k+'">'+x.t+'</button>').join('')+'</div>';
+ tell(w,q.p,()=>tell(w,'What do you think is the answer?'));
+ $$('#'+box.id+' .opt').forEach(bt=>bt.onclick=()=>{const x=o[bt.dataset.k];$$('#'+box.id+' .opt').forEach(z=>z.disabled=true);bt.classList.add('pk');
+  say(x.t.replace(/<[^>]+>/g,''),w,()=>{sc.push(x.c);const nxt=()=>{i++;setTimeout(nx,500)};if(x.c){chime();jump(w);tell(w,pick(OK),nxt)}else tell(w,pick(NO),nxt)})})})()}
+/* content */
+const SEC=[
+{n:'Internalize',a:'cow',h:'Yuri the cattle',d:'Sounds, letters, first words and sentences',L:['Sounds all around us','The alphabet trail','Farm and family words','Building words','Little sentences','Why reading matters to me'],
+ Q:'Family quest: find five things at home that start with B, and tell a grown-up their names.',
+ T:['Moo-ooh! I’m Yuri the cattle. Today we meet the sound of B. Buh, buh, ball!','Buh starts boy, banana and baby. Say it with me: buh, buh, buh.','Letters join to make words, and words tell stories. Reading helps you read signs, names and messages every day.'],
+ K:[{p:'Which word starts with the buh sound?',o:['ball','sun','cat','fish']},{p:'Which letter is first in the alphabet?',o:['A','M','Z','K']},{p:'Which one is a real word?',o:['banana','bnn','xq','nabn']}]},
+{n:'Interpret',a:'leo',h:'Zuri the leopard',d:'Short reading books and understanding what we read',L:['Following the words','Short story: the drum','Who, what and where','Nursery rhyme time','Story: market day','Tell the story back'],
+ Q:'Family quest: read one short story to a family member and ask them one question about it.',
+ T:['Habari! I’m Zuri the leopard. Good readers move like me, slow and quiet, looking at every word.','Read with me. Baraka has a small drum. The drum goes boom, boom, boom.','Good readers ask: who is it about, and what happens? This story is about Baraka and his drum.'],
+ K:[{p:'Baraka has a small…',o:['drum','car','cow','kite']},{p:'What does the drum go?',o:['boom, boom, boom','splash','meow','zoom']},{p:'Who is the story about?',o:['Baraka','Amina','Otieno','Wanjiru']}]},
+{n:'Impart',a:'gir',h:'Kazi the giraffe',d:'Speaking well, mastering skills and helping younger children read',L:['Speaking clearly','Kind words','Mastery check','Helping a little one read','Teach a friend','Final showcase'],
+ Q:'Family quest: teach a younger child or a grown-up three new words, then they say them back to you.',
+ T:['Jambo! I’m Kazi the giraffe. When we help a friend, we all grow taller together.','To help a younger child, read one word, wait, and smile. Then read it together.','Say it kindly: shall we read together? Good teachers are patient and kind.'],
+ K:[{p:'Which is a kind way to invite a friend to read?',o:['Shall we read together?','Read now!','You are slow.','Go away.']},{p:'A little child is stuck on a word. What helps most?',o:['Read it slowly together','Take the book','Laugh','Walk away']},{p:'A good helper is…',o:['patient and kind','loud and rushing','cross','sleepy']}]}];
+const FQ=[{p:'Which letter makes the sound “buh”, like in ball?',o:['B','M','S','T'],s:0},{p:'Which letter comes after A, B, C?',o:['D','F','Z','M'],s:0},{p:'🐘 Look at the picture. Which word is for it?',sp:1,o:['elephant','banana','shoe','river'],s:0},{p:'Which one is a sentence?',o:['The sun is hot.','sun the is','hot hot hot','The'],s:0},
+{p:'Read: Wanjiku has a red ball. What does Wanjiku have?',o:['a red ball','a blue hat','a goat','a book'],s:1},{p:'Read: Otieno goes to the river with his cow. Where does Otieno go?',o:['to the river','to school','to the market','to bed'],s:1},{p:'Which word rhymes with cat?',o:['hat','dog','sun','pen'],s:1},{p:'Read: The rain came. The grass is wet. Why is the grass wet?',o:['the rain came','the sun','a goat','the wind'],s:1},
+{p:'You meet a new friend. What kind thing can you say first?',o:['Hello, my name is Amani.','Go away.','Give me that.','Be quiet.'],s:2},{p:'A younger child cannot read a word. What is a kind way to help?',o:['Read it slowly together.','Laugh at them.','Walk away.','Take the book.'],s:2},{p:'Which sentence ends in the right way?',o:['Where is my goat?','Where is my goat.','where is my goat','Where is my goat,'],s:2},{p:'How do you say thank you politely?',o:['Thank you very much.','Whatever.','Give more.','No.'],s:2}];
+FQ[2].p='Look at the picture 🐘 — which word is for it?';
+/* flow */
+$('#go0').onclick=()=>{buildRM();show('s1','cow')};
+$$('#s0 .an')[0].onclick=()=>{ac();tell('lion','Jambo, little explorer! I’m Turi the lion. Welcome to Kenyai! Every day, a few small adventures will help you read, speak and shine. Are you ready to see the trail?')};
+let pgi=0;
+function buildRM(){const rm=$('#rm');if(rm.firstChild)return;rm.innerHTML=SEC.map((s,i)=>`<div class="pg"><div class="row"><div class="an sm" data-a="${s.a}"></div><div><span class="tag">Land ${i+1}: ${s.n}</span><h3 style="font-size:32px">${s.h}</h3><p>${s.d}</p></div></div><div class="map"><ol>${s.L.map((l,k)=>`<li><i>X</i>${l}</li>`).join('')}<li class="t"><i>★</i>${s.Q}</li></ol></div>${i==2?'<p style="margin:16px 0"><button class="b" id="pl" data-v="Play">click play to find your level</button></p>':''}</div>`).join('');
+ $('#dt').innerHTML=SEC.map((_,i)=>'<span></span>').join('');dots();$$('#rm .an').forEach((e,i)=>e.onclick=()=>tell(SEC[i].a,`Hello! I’m ${N[SEC[i].a]}, and I’ll walk this part of the trail with you.`));
+ rm.onscroll=()=>{pgi=Math.round(rm.scrollLeft/rm.clientWidth);dots()};$('#pl').onclick=()=>{show('s2','lion');startFind()}}
+function dots(){$$('#dt span').forEach((d,i)=>d.classList.toggle('on',i==pgi));$('#pv').disabled=pgi==0;$('#nx').disabled=pgi==2}
+const go=n=>{pgi=Math.max(0,Math.min(2,pgi+n));const r=$('#rm');r.scrollTo({left:pgi*r.clientWidth,behavior:'smooth'});dots()};
+$('#pv').onclick=()=>go(-1);$('#nx').onclick=()=>go(1);
+function startFind(){tell('lion','Hi, I’m Turi! I will read each question to you. Pick the answer you like best.',()=>quiz(FQ,'lion',$('#qb'),$('#pr'),r=>{
+ const c=[0,1,2].map(k=>FQ.reduce((a,q,i)=>a+(q.s==k&&r[i]?1:0),0)),tot=c[0]+c[1]+c[2];let lv=0;if(tot>=6&&c[0]>=3)lv=c[1]>=3?2:1;st.sec=lv;
+ $('#rb').textContent='';show('s3','lion');tell('lion',`Wonderful work, explorer! The best place to begin is ${SEC[lv].n}, with ${SEC[lv].h}. Click start to play!`)}))}
+$('#go3').onclick=()=>secmap(st.sec);
+function secmap(i){st.sec=i;const s=SEC[i];setA($('#ma'),s.a);$('#mt').textContent='Land '+(i+1)+': '+s.n;$('#mh').textContent=s.h;
+ $('#mm').innerHTML='<ol>'+s.L.map((l,k)=>`<li${k?' style="opacity:.6"':''}><i>${k+1}</i>${l}${k==0?' — start here':''}</li>`).join('')+`<li class="t"><i>★</i>${s.Q}</li></ol>`;show('s4',s.a);
+ tell(s.a,`This is the map for ${s.n}. ${s.L.length} bite-sized lessons wait for you. Let’s begin with lesson one!`)}
+$('#go4').onclick=()=>lesson(st.sec);
+$('#fq').onclick=()=>{if(st.fq&1<<st.sec)return tell(SEC[st.sec].a,'You already did this quest. Asante!');st.fq|=1<<st.sec;st.eggs+=3;st.pts+=30;eggsUI();chime();jump(SEC[st.sec].a);tell(SEC[st.sec].a,'Wow, you finished your family quest! Three bonus eggs are in your basket.')};
+function lesson(i){const s=SEC[i];setA($('#la'),s.a);$('#la').dataset.a=s.a;$('#lb').dataset.a=s.a;show('s5',s.a);let k=0;$('#lq').innerHTML='<button class="b" id="ln" data-v="Next">Next</button>';
+ const teach=()=>{$('#lp').textContent='Lesson '+(n+1)+': '+S0.L[n]+' · part '+(k+1)+' of '+s.T.length;tell(s.a,s.T[k])};teach();
+ $('#ln').onclick=()=>{k++;if(k<s.T.length)teach();else{$('#lq').innerHTML='';quiz(s.K,s.a,$('#lq'),$('#lp'),r=>finish(i,r))}}}
+function finish(i,r){const c=r.filter(Boolean).length;st.eggs+=c+1;st.pts+=c*10+5;st.done++;eggsUI();setA($('#ea'),SEC[i].a);show('s6',SEC[i].a);
+ $('#sc').textContent='Stars: '+c+' of '+r.length+' · Points: '+st.pts+' · Lessons done: '+st.done+(c==r.length?' · Badge: Trail Star':'');$('#gf').innerHTML='';egg();
+ tell(SEC[i].a,c<r.length?'Great effort today! We will practise this again soon, and you’ll grow even stronger. Crack open your eggs!':'You were amazing today! Crack open your surprise eggs!')}
+const GIFTS=[['🌿','fresh green grass'],['🥭','a sweet mango'],['🌽','roasted maize'],['⚽','a rag ball'],['🥁','a little ngoma drum'],['🍠','a sweet potato'],['🧺','a woven basket toy']];
+function egg(){const e=$('#eg');e.innerHTML='';$('#eb').dataset.a=cur;for(let n=0;n<st.eggs;n++){const b=document.createElement('button');b.className='egg';b.setAttribute('aria-label','Crack an egg');b.textContent='🥚';b.onclick=()=>{b.remove();st.eggs--;eggsUI();const g=GIFTS[Math.floor(Math.random()*GIFTS.length)],d=document.createElement('div');d.className='gift';d.innerHTML=`<span>${g[0]}</span><button class="b" data-n="1">Give to ${N[cur]}</button>`;
+ $('#gf').appendChild(d);chime();d.querySelector('button').onclick=()=>{sfx(1);setTimeout(()=>{if(AC)tone(1568,AC.currentTime,.6,.12)},250);say('Give to '+N[cur],cur,()=>{d.remove();jump(cur);tell(cur,`Asante sana! Thank you for ${g[1]}. You are so kind!`)})}};e.appendChild(b)}}
+$('#ct').onclick=()=>secmap(st.sec);
+</script><script>
+const WEL='Jambo, little explorer! I’m Turi the lion. Welcome to Kenyai! Every day, a few small adventures will help you read, speak and shine. Click me, or press start, to see the trail!';let wl=0;
+const PS={cow:'cattle',leo:'leopard',gir:'giraffe'};
+function animal(t){const k=++U,P={lion:['#FAC96A','#C98429'],cow:['#FFFFFF','#CDC5B5'],leo:['#FAD06A','#D4962A'],gir:['#FAD98A','#D1A042']}[t],c=P[0],c2=P[1];
+let h=animalOld(t).replace(/^<svg[^>]*>/,'').replace(/<defs>[\s\S]*?<\/defs>/,'').replace(/<ellipse cx="100" cy="194"[^>]*\/>/,'').replace(/<ellipse cx="74" cy="62"[^>]*\/>/,'').replace(/fill="url\(#g\d+\)"\/>/,`fill="${c}"/><ellipse cx="108" cy="146" rx="58" ry="40" fill="${c2}" opacity=".3"/><ellipse cx="108" cy="146" rx="58" ry="40" fill="url(#ht${k})"/>`).replace('</svg>','');
+const bd={lion:['#E8A84E','#B9701F'],cow:['#FFFFFF','#CDC5B5'],leo:['#F6C85E','#D69A2C'],gir:['#F8D27C','#D1A042']}[t],hy=t=='gir'?58:92,
+pat={lion:'',cow:'<ellipse cx="96" cy="196" rx="22" ry="20" fill="#2B2B2B"/><ellipse cx="150" cy="216" rx="16" ry="14" fill="#2B2B2B"/>',leo:[[90,190],[120,176],[150,200],[104,222],[140,226],[170,188]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="#5A3510"/>`).join(''),gir:[[92,190],[126,180],[152,206],[104,224],[142,226]].map(p=>`<ellipse cx="${p[0]}" cy="${p[1]}" rx="12" ry="9" fill="#B9792B" opacity=".8"/>`).join('')}[t],
+neck=t=='gir'?`<path d="M100 150L104 60H140L146 150Z" fill="${bd[0]}"/><ellipse cx="124" cy="104" rx="9" ry="12" fill="#B9792B" opacity=".8"/><ellipse cx="118" cy="138" rx="9" ry="8" fill="#B9792B" opacity=".8"/>`:'',
+tail={lion:'<path d="M184 200Q212 200 214 168" fill="none" stroke="#C98429" stroke-width="7" stroke-linecap="round"/><circle cx="214" cy="164" r="9" fill="#9C4E17"/>',cow:'<path d="M184 200Q210 204 208 236" fill="none" stroke="#2B2B2B" stroke-width="6" stroke-linecap="round"/><circle cx="208" cy="240" r="8" fill="#2B2B2B"/>',leo:'<path d="M184 204Q222 204 220 166Q218 152 204 156" fill="none" stroke="#D69A2C" stroke-width="9" stroke-linecap="round"/>',gir:'<path d="M184 196Q206 204 204 232" fill="none" stroke="#B9792B" stroke-width="5" stroke-linecap="round"/><circle cx="204" cy="236" r="7" fill="#6B4020"/>'}[t],
+lg=x=>`<rect x="${x}" y="236" width="28" height="48" rx="13" fill="${bd[0]}"/><ellipse cx="${x+14}" cy="285" rx="17" ry="8" fill="${bd[1]}"/>`;
+return `<svg viewBox="-10 -14 260 314" role="img" aria-label="${N[t]} the ${t=='leo'?'leopard':t=='gir'?'giraffe':t=='cow'?'cow':'lion'}"><defs><pattern id="ht${k}" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><line x1="0" y1="0" x2="0" y2="7" stroke="#7a4a1e" stroke-width="1.3" stroke-opacity=".22"/></pattern></defs><ellipse cx="120" cy="290" rx="78" ry="8" fill="#000" opacity=".14" style="stroke:none"/><g class="tail">${tail}</g>${lg(62)}${lg(150)}<g class="bd"><ellipse cx="120" cy="205" rx="68" ry="54" fill="${bd[0]}"/><ellipse cx="128" cy="232" rx="60" ry="26" fill="${bd[1]}" opacity=".3"/>${pat}<ellipse cx="120" cy="215" rx="66" ry="42" fill="url(#ht${k})"/></g>${lg(80)}${lg(132)}${neck}<g class="hd" transform="translate(50,${hy-77}) scale(.7)">${h}</g></svg>`}
+function paint(){$$('.an[data-a]').forEach(e=>{if(!e.firstChild){e.innerHTML=animal(e.dataset.a)+'<button class="cm" data-n="1">Click me</button>';e.querySelector('.cm').onclick=v=>{v.stopPropagation();e.click()}}if(!e.onclick)e.onclick=()=>{ac();tell(e.dataset.a,'Hi! I’m '+N[e.dataset.a]+'. I’m so happy you’re here!')}})}
+function setA(el,t){el.dataset.a=t;el.innerHTML='';paint()}
+/* voices */
+const V2={lion:[.95,1.12,.9],cow:[1,1.45,1.7],leo:[1.02,1.25,1.1],gir:[1,1.4,1.6]},FEM=/female|zira|susan|hazel|samantha|karen|moira|tessa|fiona|victoria|aria|jenny|sonia|natasha|libby|heera|veena|amy|emma|joanna|salli|kendra/i,MAL=/\bmale\b|david|daniel|george|mark|ryan|alex|fred|oliver|james|guy|rishi|thomas|liam|brian|matthew|justin|joey/i,ORD={lion:['KE','ZA','NG','GB'],cow:['NG','KE','GB','ZA'],leo:['ZA','GB','KE','NG'],gir:['KE','GB','NG','ZA']};
+function pv2(w){const f=w=='cow'||w=='gir',en=vs.filter(v=>/^en/i.test(v.lang)),ok=v=>(f?FEM:MAL).test(v.name)&&!(f?MAL:FEM).test(v.name);for(const c of ORD[w]){const x=en.find(v=>new RegExp('en[-_]'+c,'i').test(v.lang)&&ok(v));if(x)return[x,1]}const y=en.find(ok);return y?[y,1]:[en.find(v=>/en[-_]KE/i.test(v.lang))||en[0],0]}
+/* lip sync: mouth follows syllables of each word, re-synced by speech boundary events */
+let lt=[],bnd=0,tok=0;const clr=()=>{lt.forEach(clearTimeout);lt=[]},vis=(E,v)=>E.forEach(e=>e.style.setProperty('--m',v));
+function wd(E,w,ms){const g=w.toLowerCase().match(/[aeiouy]+/g)||['a'],d=ms/g.length;g.forEach((v,k)=>{const o=/[ao]/.test(v)?1:/[uw]/.test(v)?.65:.5;lt.push(setTimeout(()=>vis(E,o),k*d),setTimeout(()=>vis(E,.08),k*d+d*.62))})}
+function est(E,t,r){clr();let at=0;(t.match(/[\w’']+[.,!?]?/g)||[]).forEach(w=>{const ms=Math.max(150,w.length*70/r);lt.push(setTimeout(()=>wd(E,w,ms),at));at+=ms+(/[.!?]$/.test(w)?260:/,$/.test(w)?120:30)})}
+var PO=0,RO=0;function say0(t,w,cb){var po=PO,ro=RO;PO=0;RO=0;t=clean(t).replace(/keny\s?ai/gi,'Ken yay');const E=$$('.an[data-a="'+w+'"]'),on=x=>E.forEach(e=>e.classList.toggle('talk',x)),id=++tok,r=V2[w][0];let d=0;bnd=0;clr();
+const fin=()=>{if(d||id!=tok)return;d=1;clr();vis(E,.05);on(0);cb&&cb()};
+if(!ss){on(1);est(E,t,1);setTimeout(fin,t.length*70);return}
+speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t),[v,m]=pv2(w);if(v){u.voice=v;u.lang=v.lang}else u.lang='en-GB';u.pitch=po||V2[w][m?1:2];u.rate=ro||r;
+u.onstart=()=>{if(id!=tok)return;on(1);setTimeout(()=>{if(!bnd&&id==tok)est(E,t,r)},400)};
+u.onboundary=e=>{if(id!=tok||(e.name&&e.name!='word'))return;bnd=1;clr();const x=(t.slice(e.charIndex).match(/[\w’']+/)||[''])[0];if(x)wd(E,x,Math.max(150,x.length*70/r))};
+u.onend=fin;u.onerror=ev=>{if(id!=tok)return;if(ev.error=='not-allowed'&&w=='lion'&&$('#s0').classList.contains('on'))wl=0;fin()};
+setTimeout(()=>{if(!d&&id==tok&&!speechSynthesis.speaking)fin()},t.length*140+2500);speechSynthesis.speak(u)}
+let btnT=0;
+function say(t,w,cb,lab){if(!lab&&Date.now()-btnT<800){setTimeout(()=>say0(t,w,cb),700);return}say0(t,w,cb)}
+document.addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(b&&!b.dataset.n){btnT=Date.now();say(b.dataset.v,cur,0,1)}},true);
+/* sounds */
+function sfx(ok){if(!ac())return;const t=AC.currentTime;if(ok){[523,659,784].forEach((f,k)=>tone(f,t+k*.09,.5,.17,'triangle'));tone(1568,t+.3,.6,.08)}else{tone(392,t,.3,.1,'triangle');tone(330,t+.18,.4,.09,'triangle')}}
+function grand(){if(!ac())return;const t=AC.currentTime;[523,659,784,1047,1319].forEach((f,k)=>{tone(f,t+k*.11,.9,.06,'triangle');tone(f*2,t+k*.11,.6,.02)});tone(130,t,.5,.12);tone(196,t+.5,1.2,.06);[2093,2637,3136].forEach((f,k)=>tone(f,t+.6+k*.08,.5,.015))}
+function quiz(list,w,box,prog,done){let i=0,sc=[];(function nx(){if(i>=list.length)return done(sc);const q=list[i];prog.textContent='Question '+(i+1)+' of '+list.length;
+ const o=q.o.map((t,k)=>({t,c:k==0})).sort(()=>Math.random()-.5);box.innerHTML='<p class="q">'+q.p+'</p><div class="opts">'+o.map((x,k)=>'<button class="opt" data-k="'+k+'">'+x.t+'</button>').join('')+'</div>';
+ if(SR)box.insertAdjacentHTML('beforeend','<p><button class="b" id="dk" data-n="1" style="background:var(--clay);box-shadow:0 0 0 3px var(--clay),0 6px 0 #7d2a0c">Dictate your answer</button></p>');if($('#dk'))$('#dk').onclick=()=>{$('#dk').textContent='Listening…';dict(trs=>{if($('#dk'))$('#dk').textContent='Dictate your answer';if(!trs)return tell(w,'I could not hear you. Please try again, or tap an answer.');const k=o.findIndex(x=>matchOpt(trs,x.t));if(k<0)tell(w,'I did not catch that. Try again, or tap an answer.');else $$('#'+box.id+' .opt')[k].click()})};
+ tell(w,q.sp?'Look at the picture. Which word is for it?':q.p,()=>tell(w,'What do you think is the answer?'));
+ $$('#'+box.id+' .opt').forEach(bt=>bt.onclick=()=>{const x=o[bt.dataset.k];$$('#'+box.id+' .opt').forEach(z=>z.disabled=true);bt.classList.add('pk');
+  say(x.t.replace(/<[^>]+>/g,''),w,()=>{sc.push(x.c);const nxt=()=>{box.insertAdjacentHTML('beforeend','<p><button class="b" id="nq" data-v="Next question">'+(i+1>=list.length?'See my result':'Next question')+'</button></p>');$('#nq').onclick=()=>{i++;nx()}};sfx(x.c);setTimeout(()=>{if(x.c)jump(w);tell(w,pick(x.c?OK:NO),nxt)},750)})})})()}
+function egg(){const e=$('#eg');e.innerHTML='';$('#eb').dataset.a=cur;if(st.eggs)grand();for(let n=0;n<st.eggs;n++){const b=document.createElement('button');b.className='egg';b.setAttribute('aria-label','Crack an egg');b.textContent='🥚';b.onclick=()=>{b.remove();st.eggs--;eggsUI();const g=GIFTS[Math.floor(Math.random()*GIFTS.length)],d=document.createElement('div');d.className='gift';d.innerHTML='<span>'+g[0]+'</span><button class="b" data-n="1">Give to '+N[cur]+'</button>';$('#gf').appendChild(d);crack();setTimeout(grand,260);d.querySelector('button').onclick=()=>{say('Give to '+N[cur],cur,()=>{d.remove();jump(cur);tell(cur,'Asante sana! Thank you for '+g[1]+'. You are so kind!')})}};e.appendChild(b)}}
+/* AI tutor (Claude via the page's sample capability) */
+const pers=a=>'You are '+N[a]+' the '+PS[a]+', a gentle teacher-friend for a Kenyan child aged 5 to 8 learning English reading. Use very simple English and warm words. Never say the child is wrong and never give away the whole answer.';
+async function ai(p){try{const sm=window.claude&&await claude.use('sample');if(!sm)return null;return (await sm(p,{modelTier:'quick',cache:false})).text}catch(e){return null}}
+const T2=[{T:['Moo-ooh! Jambo, I’m Yuri the cattle, and I’m so happy to be your teacher-friend. Today we go on a sound safari together!','Every word is made of little sounds. Listen: buh, buh, ball. That first sound is the letter B. Put your lips together and pop them open: buh!','The letter B looks like a straight stick with two round tummies. Draw one in the air with your finger: down, then two bumps. Well done!','Many words start with buh: ball, banana, baby, boy and bag. In the market you can see bananas and bags. Can you say banana with me?','Why do we read? Reading helps you find your name, read the words on a matatu, and enjoy stories with your family. Every letter you learn is a new key.'],P:'Type one word that starts with the buh sound, like ball.',chk:s=>/^b/i.test(s.trim())},
+{T:['Habari! I’m Zuri the leopard. I’m a quiet tracker. Today we follow words like footprints.','Good readers go slowly. Point at each word, say it in your head, then say it out loud.','Read with me: Baraka has a small drum. The drum goes boom, boom, boom.','Now ask three questions. Who is it about? What does he have? What sound does it make? Baraka, a small drum, and boom!','Stories help us remember. When you finish, tell it back to a friend in your own words. That is how clever readers grow.'],P:'Type one sentence about Baraka and his drum.',chk:s=>s.trim().split(/\s+/).length>=3},
+{T:['Jambo! I’m Kazi the giraffe. From up here I can see how far you have come. Now you can become a helper too!','A good helper is patient. If a little one is stuck, wait, smile, and let them try again.','Kind words sound like this: Shall we read together? You are trying so well! Say them with me.','Speak clearly: open your mouth, say each sound slowly, and look at your friend. Clear words are easy to hear.','When you teach, you learn twice! Pick one new word each day and teach it to someone at home.'],P:'Type one kind sentence you could say to a friend who is learning to read.',chk:s=>s.trim().split(/\s+/).length>=3}];
+T2.forEach((x,i)=>Object.assign(SEC[i],x));
+function lesson(i){const S0=SEC[i],a=S0.a,n=st.ls[i]%S0.LS.length,s=Object.assign({},S0,S0.LS[n]);setA($('#la'),a);$('#lb').dataset.a=a;show('s5',a);let k=0;const lq=$('#lq');
+ if(!$('#ask')){$('#s5').insertAdjacentHTML('beforeend','<div class="card" id="ask" style="margin-top:14px"><label for="ai" id="al"></label><div class="row"><input id="ai" class="in" maxlength="120" placeholder="Type your question"><button class="b" id="ab" data-n="1">Ask</button></div></div>');
+  $('#ab').onclick=async()=>{const q=$('#ai').value.trim();if(!q)return;const a2=$('#lb').dataset.a;tell(a2,'Let me think…');const r=await ai(pers(a2)+'\nThe child asks: "'+q.slice(0,150)+'"\nAnswer helpfully in at most 3 short sentences. If it is not about learning or this app, gently steer back to the lesson.');tell(a2,r||'I need my thinking power to answer that, but let’s keep learning together!')}}
+ $('#al').textContent='Ask '+N[a]+' a question';lq.innerHTML='<div id="gx"></div><button class="b" id="ln" data-v="Next">Next</button>';
+ const teach=()=>{$('#lp').textContent='Lesson '+(n+1)+': '+S0.L[n]+' · part '+(k+1)+' of '+s.T.length;$('#gx').innerHTML=gfx(s.G,k);tell(a,s.T[k])};teach();
+ $('#ln').onclick=()=>{k++;if(k<s.T.length)return teach();$('#lp').textContent='Practice time with '+N[a];lq.innerHTML='<p class="q"></p><div class="row"><input id="pi" class="in" maxlength="120" aria-label="Your answer"><button class="b" id="pd" data-n="1" style="background:var(--clay)">Dictate</button><button class="b" id="ps" data-n="1">Check with '+N[a]+'</button></div><p id="pf"></p>';lq.querySelector('.q').textContent=s.P;tell(a,'Now it’s your turn! '+s.P);
+  if($('#pd')){if(SR)$('#pd').onclick=()=>dict(t=>{if(t)$('#pi').value=t[0]});else $('#pd').remove()}$('#ps').onclick=async()=>{const txt=$('#pi').value.trim();if(!txt)return;$('#ps').disabled=true;tell(a,'Let me look…');const r=await ai(pers(a)+'\nTask: "'+s.P+'"\nThe child wrote: "'+txt.slice(0,200)+'"\nDecide if the child did the task reasonably (ignore spelling slips). Reply ONLY JSON: {"ok":true or false,"say":"your warm spoken reply, max 2 short sentences"}');let j;try{j=JSON.parse(r.match(/\{[\s\S]*\}/)[0])}catch(e){const ok=s.chk(txt);j={ok,say:ok?'Lovely work! You did it.':'Good try! Let’s have another go, you are growing stronger.'}}
+   sfx(j.ok);if(j.ok){st.pts+=10;jump(a)}$('#ps').disabled=false;tell(a,String(j.say||'Great trying!'),()=>{if(!$('#pc')){$('#pf').innerHTML='<button class="b" id="pc" data-v="Continue">Continue to questions</button>';$('#pc').onclick=()=>{lq.innerHTML='';quiz(s.K,a,lq,$('#lp'),r2=>finish(i,r2))}}})}}}
+$('#s0 .an').onclick=()=>{ac();wl=1;tell('lion',WEL)};
+function welcome(){if(wl||!$('#s0').classList.contains('on'))return;wl=1;tell('lion',WEL)}
+$$('.an').forEach(e=>e.innerHTML='');paint();
+setTimeout(welcome,700);addEventListener('pointerdown',welcome,{once:true});
+</script><script>
+const clean=s=>String(s).replace(/[\u{1F000}-\u{1FAFF}\u2600-\u27BF\uFE0F\u200D]/gu,'').replace(/\s+/g,' ').trim();
+function tell(w,t,cb){t=clean(t);$$('.bub[data-a="'+w+'"]').forEach(b=>b.textContent=t);say(t,w,cb)}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+function dict(cb){if(!SR)return;try{speechSynthesis.cancel()}catch(e){}tok++;clr();$$('.an').forEach(e=>e.classList.remove('talk'));const r=new SR();r.lang='en-GB';r.maxAlternatives=3;r.onresult=e=>cb([...e.results[0]].map(x=>x.transcript.toLowerCase()));r.onerror=()=>cb(null);r.onnomatch=()=>cb(null);try{r.start()}catch(e){cb(null)}}
+const LET={a:'a ay eh',b:'b be bee',c:'c see sea',d:'d dee',f:'f ef eff',k:'k kay',m:'m em',s:'s es ess',t:'t tea tee',z:'z zed zee'};
+function matchOpt(trs,txt){const o=txt.replace(/<[^>]+>/g,'').toLowerCase().replace(/[^a-z0-9 ]/g,'').trim();if(!o)return false;return trs.some(t=>{t=t.replace(/[^a-z0-9 ]/g,'').trim();if(o.length==1)return LET[o]&&LET[o].split(' ').some(w=>t.split(' ').includes(w));return t.includes(o)||(t.length>2&&o.includes(t))})}
+function crack(){if(!ac())return;const t=AC.currentTime,b=AC.createBuffer(1,AC.sampleRate*.15,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);const s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();f.type='highpass';f.frequency.value=1800;g.gain.value=.6;s.buffer=b;s.connect(f).connect(g).connect(AC.destination);s.start(t);tone(220,t,.06,.18,'square');tone(170,t+.09,.05,.12,'square')}
+/* new watercolor-storybook animals */
+function animal(t){const k=++U,[c,d,m,n]={lion:['#F3C27A','#D9964A','#FBE6C2','#6B3A22'],cow:['#B97A4B','#8F5832','#E9CFA6','#6B3A22'],leo:['#F6C760','#D9962E','#FFF1D2','#6B3A3A'],gir:['#F8D878','#D9A545','#FDEBC0','#7A4A22']}[t],dy=t=='gir'?-36:0,bl=`filter="url(#bl${k})"`,
+dots=(a,r,fl,o)=>a.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="${r}" fill="${fl}" opacity="${o}"/>`).join(''),
+el=(a,fl)=>a.map(p=>`<ellipse cx="${p[0]}" cy="${p[1]}" rx="${p[2]}" ry="${p[2]*.8}" fill="${fl}" opacity=".75"/>`).join(''),
+spot={leo:dots([[80,70],[100,60],[140,60],[160,72],[120,52],[66,100],[174,100]],6,'#7A4A1E',.8),cow:'<ellipse cx="150" cy="70" rx="28" ry="16" fill="#8F5832" opacity=".45"/>',gir:el([[84,66,12],[156,70,12],[120,50,10],[64,104,9]],'#C0803A'),lion:''}[t],
+bsp={leo:dots([[92,196],[124,184],[150,206],[100,230],[140,238],[78,220]],7,'#7A4A1E',.8),cow:'<ellipse cx="96" cy="196" rx="26" ry="20" fill="#8F5832" opacity=".4"/>',gir:el([[92,196,12],[128,186,12],[152,212,12],[102,232,12],[140,240,12]],'#C0803A'),lion:''}[t],
+ear=(x,y,r,e2)=>`<g class="ear${e2?' e2':''}"><circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/><circle cx="${x}" cy="${y}" r="${r/2}" fill="#F2A3A0"/></g>`;
+let bk='';
+if(t=='lion'){const R=(rx,ry,r,off,col)=>[...Array(12)].map((_,i)=>{const a=i*Math.PI/6+off;return `<circle cx="${120+Math.cos(a)*rx}" cy="${112+Math.sin(a)*ry}" r="${r}" fill="${col}"/>`}).join('');bk=R(68,62,27,0,'#B5693A')+R(58,52,22,.26,'#CC8450')+'<circle cx="120" cy="112" r="64" fill="#C27A45"/>'+ear(66,56,18)+ear(174,56,18,1)}
+if(t=='cow')bk=`<ellipse cx="176" cy="156" rx="32" ry="28" fill="${c}"/><path d="M84 56Q56 44 60 6Q80 26 100 48Z" fill="#D2AC6A"/><path d="M156 56Q184 44 180 6Q160 26 140 48Z" fill="#D2AC6A"/><g class="ear"><ellipse cx="38" cy="116" rx="16" ry="34" fill="${d}" transform="rotate(22 38 116)"/><ellipse cx="40" cy="118" rx="8" ry="22" fill="#F2A3A0" transform="rotate(22 40 118)"/></g><g class="ear e2"><ellipse cx="202" cy="116" rx="16" ry="34" fill="${d}" transform="rotate(-22 202 116)"/><ellipse cx="200" cy="118" rx="8" ry="22" fill="#F2A3A0" transform="rotate(-22 200 118)"/></g>`;
+if(t=='leo')bk=ear(62,60,21)+ear(178,60,21,1);
+if(t=='gir')bk=`<rect x="92" y="14" width="9" height="40" rx="4" fill="#C0803A"/><circle cx="96" cy="14" r="8" fill="#6B4020"/><rect x="139" y="14" width="9" height="40" rx="4" fill="#C0803A"/><circle cx="144" cy="14" r="8" fill="#6B4020"/><g class="ear"><ellipse cx="46" cy="88" rx="26" ry="12" fill="${d}" transform="rotate(-20 46 88)"/></g><g class="ear e2"><ellipse cx="194" cy="88" rx="26" ry="12" fill="${d}" transform="rotate(20 194 88)"/></g>`;
+const mz=t=='cow'?[42,28]:[34,24],
+head=`<g transform="translate(0,${dy})">${bk}<ellipse cx="120" cy="112" rx="78" ry="70" fill="${d}"/><ellipse cx="120" cy="112" rx="74" ry="66" fill="${c}"/><g clip-path="url(#cp${k})"><ellipse cx="150" cy="170" rx="80" ry="44" fill="${d}" opacity=".5" ${bl}/><ellipse cx="90" cy="68" rx="42" ry="22" fill="#fff" opacity=".45" ${bl}/>${spot}${dots([[100,84],[140,80],[116,70],[76,118],[164,116],[128,96],[96,126]],2.2,d,.55)}</g><ellipse cx="120" cy="142" rx="${mz[0]}" ry="${mz[1]}" fill="${m}"/><circle cx="72" cy="128" r="11" fill="#F4948C" opacity=".5" ${bl}/><circle cx="168" cy="128" r="11" fill="#F4948C" opacity=".5" ${bl}/><g class="eyes">${[88,152].map(x=>`<circle cx="${x}" cy="108" r="9" fill="#2B1B0E"/><circle cx="${x-3}" cy="104" r="3.4" fill="#fff"/><circle cx="${x+3}" cy="112" r="1.6" fill="#fff"/>`).join('')}</g><path class="hp" d="M76 110Q88 94 100 110M140 110Q152 94 164 110" stroke="#2B1B0E" stroke-width="5" fill="none" stroke-linecap="round"/><path class="br" d="M74 90Q88 82 102 88M138 88Q152 82 166 90" stroke="#5A2A18" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M110 128Q120 121 130 128Q126 137 120 137Q114 137 110 128Z" fill="${n}"/><g class="mouth"><path d="M105 146Q120 178 135 146Q120 151 105 146Z" fill="#7A1F2E"/><ellipse cx="120" cy="163" rx="9" ry="5" fill="#E8707A"/></g><path d="M120 137V144M103 145Q111 154 120 145Q129 154 137 145" stroke="#5A2A18" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>`,
+neck=t=='gir'?`<rect x="98" y="100" width="44" height="120" rx="20" fill="${d}"/><rect x="101" y="100" width="38" height="120" rx="18" fill="${c}"/>${el([[116,140,9],[128,176,9]],'#C0803A')}`:'',
+tc=t=='cow'?'#6B3A22':t=='lion'?'#C27A45':t=='leo'?d:'#C0803A',
+body=`<ellipse cx="120" cy="288" rx="80" ry="9" fill="#5b4a2a" opacity=".18" ${bl}/><g class="tail"><path d="M178 252Q214 250 214 214" fill="none" stroke="${tc}" stroke-width="${t=='gir'?6:10}" stroke-linecap="round"/>${t=='lion'?'<circle cx="214" cy="210" r="11" fill="#9C4E17"/>':''}</g><ellipse cx="60" cy="280" rx="22" ry="11" fill="${c}"/><ellipse cx="180" cy="280" rx="22" ry="11" fill="${c}"/><ellipse cx="120" cy="216" rx="66" ry="68" fill="${d}"/><ellipse cx="120" cy="216" rx="62" ry="64" fill="${c}"/><ellipse cx="120" cy="232" rx="40" ry="44" fill="${m}"/><g clip-path="url(#cb${k})">${bsp}</g>${neck}<ellipse cx="94" cy="272" rx="21" ry="14" fill="${c}"/><ellipse cx="146" cy="272" rx="21" ry="14" fill="${c}"/><ellipse cx="94" cy="277" rx="6" ry="4" fill="#F2A3A0"/><ellipse cx="146" cy="277" rx="6" ry="4" fill="#F2A3A0"/>`;
+return `<svg viewBox="0 -34 240 334" role="img" aria-label="${N[t]} the ${{lion:'lion',cow:'cow',leo:'leopard',gir:'giraffe'}[t]}"><defs><filter id="bl${k}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter><clipPath id="cp${k}"><ellipse cx="120" cy="112" rx="74" ry="66"/></clipPath><clipPath id="cb${k}"><ellipse cx="120" cy="216" rx="62" ry="64"/></clipPath></defs>${body}${head}</svg>`}
+/* lessons, graphics, video */
+const G1=[[['Bb','⚽ ball,🍌 banana,👶 baby'],['B','buh, buh, buh'],['*B','Trace the letter B'],['B b','🎒 bag,👦 boy,🍌 banana'],['📖','🚌 matatu,📛 my name,📚 books']],[['👣','follow the words'],['👆','point, think, say'],['🥁','Baraka has a small drum'],['?','who, what, sound'],['🗣️','tell it back']],[['🦒','helpers grow tall'],['😊','be patient'],['💬','Shall we read together?'],['👄','speak clearly'],['📚','teach a new word']]];
+const EX=[[{T:['Hodi! Yuri here. Today we meet the first letters: A, B and C. The alphabet is a long trail of twenty-six letters.','A says ah, like in apple. B says buh, like in ball. C says kuh, like in cat.','Let us sing the trail: A, B, C. Point to each letter as you say it. Now say it again, slowly.'],G:[['ABC','the alphabet trail'],['A B C','🍎 apple,⚽ ball,🐱 cat'],['A B C','sing and point']],P:'Type the three letters we learned today.',chk:s=>/a/i.test(s)&&/b/i.test(s)&&/c/i.test(s),K:[{p:'Which letter says ah, like in apple?',o:['A','Z','M','T']},{p:'Which letter comes after B?',o:['C','F','K','S']},{p:'Which word starts with the kuh sound?',o:['cat','ball','sun','fish']}]},
+{T:['Moo! Today we learn words from home and the farm: mama, baba, cow and goat.','Say each word in little claps. Ma-ma. Ba-ba. Cow. Goat. Clap, clap, clap!','Words are made of sounds. You can build words like building blocks.'],G:[['🐄🐐','mama, baba, cow, goat'],['👏','ma-ma, ba-ba, cow, goat'],['c-ow','build words like blocks']],P:'Type the name of one animal you know.',chk:s=>s.trim().length>=2,K:[{p:'Which word is an animal on a farm?',o:['goat','table','shoe','spoon']},{p:'Which word do we say for our mother?',o:['mama','baba','cow','sun']},{p:'How many claps are in the word mama?',o:['two','five','one','nine']}]}],
+[{T:['Habari again! I’m Zuri. Today we read about Amina and a mango.','Read with me: Amina sees a big mango. The mango is yellow. Amina is happy.','Ask: what does Amina see? What colour is it? How does she feel?'],G:[['🥭','Amina sees a mango'],['🟡','a big yellow mango'],['?','what, colour, feel']],P:'Type one sentence about the mango.',chk:s=>s.trim().split(/\s+/).length>=3,K:[{p:'What does Amina see?',o:['a big mango','a small drum','a goat','a bus']},{p:'What colour is the mango?',o:['yellow','blue','black','pink']},{p:'How does Amina feel?',o:['happy','angry','sleepy','cold']}]},
+{T:['Welcome back! Good readers find who, what and where in a story.','Read: Otieno walks to the market with his mother. They buy fish and rice.','Who walks? Otieno. Where? To the market. What do they buy? Fish and rice.'],G:[['🔎','who, what, where'],['🚶','Otieno, market, fish and rice'],['✔','who? where? what?']],P:'Type who walks to the market in the story.',chk:s=>/otieno/i.test(s),K:[{p:'Where do Otieno and his mother go?',o:['to the market','to the river','to school','to bed']},{p:'What do they buy?',o:['fish and rice','a drum','shoes','a book']},{p:'Who walks to the market?',o:['Otieno','Amina','Baraka','Wanjiku']}]}],
+[{T:['Jambo! Kazi here. Today we practise speaking clearly and politely.','Greet like this: Good morning, teacher! Say it loudly and clearly, with a smile.','When you want something, say please. When you receive it, say thank you.'],G:[['🗣️','speak clearly and politely'],['👋','Good morning, teacher!'],['🙏','please, thank you']],P:'Type a polite sentence to ask for water.',chk:s=>/please|may i|could/i.test(s),K:[{p:'Which is a polite way to ask for water?',o:['May I please have some water?','Give water!','Water!','I want, now.']},{p:'Which words do we say after getting a gift?',o:['thank you','later','never','go away']},{p:'Good ___, teacher!',o:['morning','banana','jump','shoe']}]},
+{T:['Hello again! Today we build strong sentences.','A sentence starts with a capital letter and ends with a full stop. The sun is hot.','A question ends with a question mark. Where is my goat?'],G:[['✏️','build sentences'],['A.','The sun is hot.'],['?','Where is my goat?']],P:'Type one sentence about your day. Start with a capital letter.',chk:s=>/^[A-Z]/.test(s.trim())&&s.trim().split(/\s+/).length>=3,K:[{p:'How does a sentence start?',o:['with a capital letter','with a number','with a dot','with a comma']},{p:'Which mark ends a question?',o:['?','.',',',':']},{p:'Which is a full sentence?',o:['The goat is big.','goat big','The','is big the']}]}]];
+SEC.forEach((s,i)=>{s.LS=[{T:s.T,P:s.P,chk:s.chk,K:s.K,G:G1[i]},...EX[i]];s.L=s.L.slice();});
+st.ls=[0,0,0];
+FQ[9]={p:'Say this aloud, then pick the missing word: Good ___, teacher!',o:['morning','banana','jump','shoe'],s:2};
+function gfx(G,k){const g=(G||[])[k];if(!g)return'';if(g[0]=='*B')return '<div class="gfx"><svg viewBox="0 0 120 130" width="140" aria-hidden="true"><path d="M30 12V118M30 12H62Q94 12 94 38Q94 62 62 62H30M62 62Q100 62 100 90Q100 118 62 118H30" fill="none" stroke="#C8481A" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1;animation:dw 3s ease forwards"/></svg><div class="chips"><span>'+g[1]+'</span></div></div>';return '<div class="gfx"><div class="big">'+g[0]+'</div><div class="chips">'+g[1].split(',').map(c=>'<span>'+c.trim()+'</span>').join('')+'</div></div>'}
+let VI=0,VP=0,VS=null;
+document.body.insertAdjacentHTML('beforeend','<div id="vid" class="vo" role="dialog" aria-label="Lesson video"><div class="card" style="max-width:720px;margin:auto;width:100%"><div class="row"><div class="an sm" id="va"></div><div class="bub" id="vt"></div></div><div id="vg" style="margin-top:12px"></div><div class="vbar"><i id="vb"></i></div><p><button class="b" id="vp" data-n="1">Pause</button> <button class="b" id="vx" data-v="Close" style="background:var(--clay)">Close</button></p></div></div>');
+const vstop=()=>{VP=0;tok++;try{speechSynthesis.cancel()}catch(e){}clr();$$('.an').forEach(e=>e.classList.remove('talk'))};
+function vplay(){if(!VP)return;$('#vg').innerHTML=gfx(VS.G,VI);$('#vb').style.width=(VI/VS.T.length*100)+'%';tell(VS.a,VS.T[VI],()=>{if(!VP)return;VI++;if(VI>=VS.T.length){VP=0;$('#vb').style.width='100%';$('#vp').textContent='Watch again';if(!VS.d){VS.d=1;st.pts+=5}sfx(1);tell(VS.a,'That was our little video. Well done for watching!');return}setTimeout(vplay,500)})}
+function openVid(i){const S=SEC[i],n=st.ls[i]%S.LS.length;VS={a:S.a,T:S.LS[n].T,G:S.LS[n].G};VI=0;VP=1;setA($('#va'),VS.a);$('#vt').dataset.a=VS.a;$('#vid').classList.add('on');$('#vp').textContent='Pause';vplay()}
+$('#vp').onclick=()=>{if(VP){vstop();$('#vp').textContent='Play'}else{if(VI>=VS.T.length)VI=0;VP=1;$('#vp').textContent='Pause';vplay()}};
+$('#vx').onclick=()=>{vstop();$('#vid').classList.remove('on')};
+$('#wv').onclick=()=>openVid(st.sec);
+$('#nl').onclick=()=>secmap(st.sec+1);
+/* progress-aware section map, intros */
+const _sm=secmap;secmap=function(i){$('#mb').dataset.a=SEC[i].a;_sm(i);const n=st.ls[i],S=SEC[i],a=S.a;
+ $('#mm').innerHTML='<ol>'+S.L.map((l,k)=>`<li${k>n?' style="opacity:.6"':''}><i>${k<n&&k<3?'✓':k+1}</i>${l}${k<n&&k<3?' — done':k==n&&k<3?' — start here':k>=3?' — coming soon':''}</li>`).join('')+`<li class="t"><i>★</i>${S.Q}</li></ol>`;
+ $('#go4').textContent=n>=3?'Learn again':'Start lesson '+(n+1);$('#nl').style.display=n>=3&&i<2?'':'none';
+ if(n>0)tell(a,n>=3?'You finished all my lessons for now! Learn again, watch a video, or visit the next land.':'Wonderful work! Lesson '+(n+1)+' is ready when you are.')};
+const _fn=finish;finish=function(i,r){st.ls[i]++;_fn(i,r)};
+const INTRO=['Welcome to the land of Internalize! I’m Yuri the cattle. Here we learn sounds, letters and our first words, and why reading is useful every day.','Welcome to the land of Interpret! I’m Zuri the leopard. Here we read short stories and learn to understand what we read.','Welcome to the land of Impart! I’m Kazi the giraffe. Here we practise speaking well and building strong sentences. When you are ready, click play to find your level!'];
+const intro=i=>sing(i);
+$('#go0').onclick=()=>{buildRM();const rm=$('#rm');if(!rm.dataset.i){rm.dataset.i=1;$$('#rm .pg').forEach((p,i)=>p.querySelector('.row').insertAdjacentHTML('afterend','<div class="bub" data-a="'+SEC[i].a+'" style="margin-top:10px"></div>'));let tm;rm.onscroll=()=>{const p=Math.round(rm.scrollLeft/rm.clientWidth);if(p!=pgi){pgi=p;dots();clearTimeout(tm);tm=setTimeout(()=>intro(pgi),400)}}}pgi=0;show('s1','cow');intro(0)};
+$$('.an').forEach(e=>e.innerHTML='');paint();
+</script><script>
+/* ---------- curriculum: Internalize ---------- */
+const ALPHA='A|ah|apple|🍎|ant|🐜|arm|💪;B|buh|ball|⚽|banana|🍌|baby|👶;C|kuh|cat|🐱|cup|☕|cow|🐄;D|duh|dog|🐶|drum|🥁|door|🚪;E|eh|egg|🥚|elephant|🐘|ear|👂;F|fff|fish|🐟|fan|🪭|foot|🦶;G|guh|goat|🐐|girl|👧|grapes|🍇;H|huh|hat|🎩|house|🏠|hen|🐔;I|ih|insect|🐛|iguana|🦎|ink|🖋️;J|juh|jacket|🧥|jam|🍓|jump|🤸;K|kuh|kite|🪁|key|🔑|king|👑;L|lll|lion|🦁|leaf|🍃|lemon|🍋;M|mmm|moon|🌙|mango|🥭|mama|👩;N|nnn|nose|👃|nut|🥜|night|🌃;O|oh|orange|🍊|octopus|🐙|ox|🐂;P|puh|pig|🐖|pot|🍲|pen|🖊️;Q|kwuh|queen|👸|quiet|🤫|quick|💨;R|rrr|rain|🌧️|rabbit|🐇|rice|🍚;S|sss|sun|☀️|sock|🧦|snake|🐍;T|tuh|tree|🌳|tea|🍵|turtle|🐢;U|uh|umbrella|☂️|up|⬆️|uncle|👨;V|vvv|van|🚐|violin|🎻|vegetables|🥦;W|wuh|water|💧|watch|⌚|web|🕸️;X|ks|box|📦|fox|🦊|six|6️⃣;Y|yuh|yam|🍠|yawn|🥱|yellow|🟡;Z|zzz|zebra|🦓|zip|🤐|zoo|🏞️'.split(';').map(x=>x.split('|'));
+function genI(){const out=[],oth=(ix)=>ALPHA.filter((_,j)=>j!=ix).sort(()=>Math.random()-.5).slice(0,3);
+ ALPHA.forEach((d,ix)=>{const [L,snd,w1,e1,w2,e2,w3,e3]=d,l=L.toLowerCase(),ch=e1+' '+w1+','+e2+' '+w2+','+e3+' '+w3;
+  let T=[`Let us meet the letter ${L}. It makes the sound ${snd}, as in ${w1}.`,`Can you say ${L}? ${snd}, ${snd}, ${w1}!`,`Words that begin with ${L} are ${w1}, ${w2} and ${w3}. Say them with me.`,`Now let us trace the letter ${L} with your finger. Follow the dotted shape slowly.`],G=[[L+' '+l,ch],['🎤','Say it: '+L],[L+l,ch],['✍️','Trace the letter '+L]];
+  if(ix==0){T=['Welcome to the alphabet! There are twenty-six letters, and each letter has a name and a sound.','Letters join together to make words, and words make stories. We begin with the very first letter, A.',...T];G=[['A to Z','26 letters'],['📖','letters, words, stories'],...G]}
+  const nx=ALPHA[ix+1],o1=oth(ix).map(x=>x[0]),o2=oth(ix).map(x=>x[2]),o3=oth(ix).map(x=>x[0]);
+  out.push({title:ix?`Phonetics and tracing: the letter ${L}`:'Alphabet overview and the letter A',T,G,TR:L,LI:{L,snd,w1},P:`Type one word that starts with ${L}.`,chk:s=>s.trim().toLowerCase().startsWith(l),K:[{p:`Which letter makes the sound "${snd}", like in ${w1}?`,o:[L,...o1]},{p:`Which word starts with the letter ${L}?`,o:[w1,...o2]},{p:nx?`Which letter comes after ${L}?`:'Which letter comes before Z?',o:[nx?nx[0]:'Y',...o3.filter(x=>x!=(nx?nx[0]:'Y'))].slice(0,4)}]})});
+ const M=(title,T,G,P,chk,K)=>({title,T,G,P,chk,K});
+ out.push(M('Word recognition',['Letters join to make words. Look at the word cat. C, A, T. When we see a word and know it, that is word recognition.','Some words we see every day: mama, baba, home, the and and. Say each one.','Point to a word and say it. Then find the same word again in a story.'],[['cat','C-A-T'],['👀','mama, baba, home, the, and'],['👆','point and say']],'Type the word you see: mama',s=>/mama/i.test(s),[{p:'Which word says cat?',o:['cat','cap','car','can']},{p:'Which word says mama?',o:['mama','nana','mimi','mom']},{p:'Which one is a real word?',o:['home','hmoe','ohem','mhoe']}]));
+ out.push(M('Word formation',['We can build words with letters like blocks. C plus A plus T makes cat.','Change the first letter and you make a new word: cat, hat, mat, sat.','Change the last letter too: bat becomes bag, and bag becomes big.'],[['c+a+t','cat'],['🧱','cat, hat, mat, sat'],['🔄','bat, bag, big']],'Type a new word by changing the first letter of cat.',s=>/^[a-z]at$/i.test(s.trim())&&s.trim().toLowerCase()!='cat',[{p:'C, A, T makes which word?',o:['cat','cut','cot','cab']},{p:'Change the c in cat to h. Which word is it?',o:['hat','cap','bat','car']},{p:'Which word rhymes with cat?',o:['mat','dog','sun','pen']}]));
+ out.push(M('Vocabulary list',['Today’s word list: sun, moon, rain, tree and water. Say each word with me.','Words have meanings. Water is something we drink. A tree is a tall plant. Rain falls from the clouds.','Try to use one new word today when you talk with your family.'],[['📝','sun, moon, rain, tree, water'],['💧','water, tree, rain'],['🗣️','use a new word today']],'Type one word from our list.',s=>/sun|moon|rain|tree|water/i.test(s),[{p:'Which word is something we drink?',o:['water','tree','moon','sun']},{p:'What falls from the clouds?',o:['rain','sun','moon','goat']},{p:'Which word names a tall plant?',o:['tree','rain','cup','hat']}]));
+ out.push(M('Sentence formation',['A sentence tells a whole idea. The goat eats grass.','A sentence starts with a capital letter and ends with a full stop.','Words must be in the right order. Is, hot, the, sun becomes: The sun is hot.'],[['✏️','The goat eats grass.'],['A .','capital letter, full stop'],['🔀','The sun is hot.']],'Type your own sentence. Start with a capital letter.',s=>/^[A-Z]/.test(s.trim())&&s.trim().split(/\s+/).length>=3,[{p:'Which one is a sentence?',o:['The sun is hot.','sun hot','The','is hot sun']},{p:'Put in order: goat, the, big, is.',o:['The goat is big.','Big the is goat.','Goat big the is.','Is the big goat.']},{p:'What goes at the end of a sentence?',o:['a full stop','a number','a leaf','a drum']}]));
+ out.push(M('Parts of speech',['Words have jobs. Nouns name things, like goat, mama and river.','Verbs are doing words, like run, jump and eat. Adjectives describe, like big, red and happy.','A sentence can use all of them: The happy goat jumps.'],[['🐐','nouns: goat, mama, river'],['🏃','verbs: run, jump, eat'],['🌈','adjectives: big, red, happy']],'Type one noun, one verb and one adjective.',s=>s.trim().split(/[\s,]+/).length>=3,[{p:'Which word is a noun?',o:['goat','jump','happy','quickly']},{p:'Which word is a verb, a doing word?',o:['jump','tree','red','mama']},{p:'Which word describes something?',o:['big','run','river','eat']}]));
+ return out}
+SEC[0].LS=genI();
+SEC[0].d='The alphabet, sounds, words, vocabulary, sentences and parts of speech';
+SEC[0].L=['Alphabet overview and the letter A','Phonetics and tracing: B to Z','Word recognition','Word formation','Vocabulary list','Sentence formation','Parts of speech'];SEC[0].st=[0,1,26,27,28,29,30];
+SEC[1].st=[0,1,2,3,4,5];SEC[2].st=[0,1,2,3,4,5];
+Object.assign(V2,{lion:[.95,1.3,1.1],cow:[1,1.55,1.8],leo:[.98,1.4,1.25],gir:[1,1.55,1.75]});ORD.leo=['KE','NG','ZA','GB'];PS.cow='cattle';
+/* ---------- ambient safari sounds (one at a time) ---------- */
+const NB=d=>{const b=AC.createBuffer(1,AC.sampleRate*d,AC.sampleRate),x=b.getChannelData(0);for(let i=0;i<x.length;i++)x[i]=Math.random()*2-1;return b};
+function nz(d,ty,fq,q,vol){const s=AC.createBufferSource(),fl=AC.createBiquadFilter(),g=AC.createGain(),t=AC.currentTime;s.buffer=NB(d);fl.type=ty;fl.frequency.value=fq;fl.Q.value=q;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+d*.4);g.gain.linearRampToValueAtTime(0,t+d);s.connect(fl).connect(g).connect(AC.destination);s.start(t);s.stop(t+d)}
+function osc(ty,f1,f2,d,vol,lp,vib){const o=AC.createOscillator(),g=AC.createGain(),fl=AC.createBiquadFilter(),t=AC.currentTime;o.type=ty;o.frequency.setValueAtTime(f1,t);o.frequency.linearRampToValueAtTime(f2,t+d);fl.type='lowpass';fl.frequency.value=lp;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+d*.2);g.gain.linearRampToValueAtTime(0,t+d);if(vib){const l=AC.createOscillator(),lg=AC.createGain();l.frequency.value=vib;lg.gain.value=f1*.03;l.connect(lg).connect(o.frequency);l.start(t);l.stop(t+d)}o.connect(fl).connect(g).connect(AC.destination);o.start(t);o.stop(t+d)}
+const AMB=[[3.5,()=>nz(3.5,'bandpass',3200,.8,.07)],[4,()=>nz(4,'lowpass',700,.5,.09)],[3.2,()=>[0,.4,.8,1,1.4,1.8,2.2,2.4].forEach((x,k)=>{const t=AC.currentTime+x;tone(k%3==2?110:150,t,.18,.12);tone(70,t,.15,.1)})],[2,()=>[0,.18,.36,.9,1.08].forEach(x=>{const t=AC.currentTime+x,o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(2800,t);o.frequency.exponentialRampToValueAtTime(4200,t+.08);g.gain.setValueAtTime(.05,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+.12)})],[1.6,()=>{osc('sawtooth',2200,1500,.7,.025,3500,30);setTimeout(()=>AC&&osc('sawtooth',2000,1300,.6,.02,3200,28),800)}],[1.6,()=>osc('sawtooth',140,105,1.5,.07,520,5)],[1.5,()=>{osc('sawtooth',95,60,1.3,.09,380,12);nz(1.3,'lowpass',300,1,.04)}],[1.6,()=>osc('sawtooth',200,520,1.5,.05,1500,9)]];
+let lastAmb=-1,nextAmb=0;
+function tick(){if(!mus||!AC)return;const n=AC.currentTime;if(n<nextAmb)return;let k;do k=Math.floor(Math.random()*AMB.length);while(k==lastAmb);lastAmb=k;AMB[k][1]();nextAmb=n+AMB[k][0]+3+Math.random()*5}
+document.addEventListener('click',e=>{if(e.target.closest('button')&&ac()){const t=AC.currentTime;tone(620,t,.06,.05);tone(420,t+.02,.07,.04)}},true);
+/* ---------- expressions, songs ---------- */
+function expr(w,k){$$('.an[data-a="'+w+'"]').forEach(e=>{e.classList.remove('happy','oops');e.classList.add(k);setTimeout(()=>e.classList.remove(k),2600)})}
+const SONG=[['A, B, C, the trail begins,','Letters make the sounds we know,','Words and stories, sentences too,','Internalize, and watch you grow!'],['Look at the words, what do they say?','Follow the tracks, the story is near,','Who and where and what and why,','Interpret, and the meaning is clear!'],['Speak up loud with a happy voice,','Share the things you learn today,','Tell a friend and help them grow,','Impart, and light the way!']];
+let SG=0;function sing(i){const a=SEC[i].a,L=SONG[i],id=++SG;$$('.bub[data-a="'+a+'"]').forEach(b=>b.textContent='♪ '+L.join(' ♪ ')+' ♪');let k=0;const nx=()=>{if(id!=SG||k>=L.length)return;PO=Math.min(2,V2[a][2]*[1,1.1,1,1.18][k%4]);RO=.8;if(AC)tone(262*2**([0,4,7,12][k%4]/12),AC.currentTime,.9,.07,'triangle');say(L[k],a,()=>{if(id!=SG)return;k++;setTimeout(nx,200)})};nx()}
+/* ---------- dictation ---------- */
+async function dict(cb){if(!SR)return cb(null,'unsupported');try{speechSynthesis.cancel()}catch(e){}tok++;clr();$$('.an').forEach(e=>e.classList.remove('talk'));
+ try{if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop())}}catch(e){return cb(null,'not-allowed')}
+ const r=new SR();let got=0;r.lang='en-GB';r.maxAlternatives=3;r.onresult=e=>{got=1;cb([...e.results[0]].map(x=>x.transcript.toLowerCase()))};r.onerror=e=>{if(!got){got=1;cb(null,e.error)}};r.onend=()=>{if(!got){got=1;cb(null,'no-speech')}};if(AC)tone(880,AC.currentTime,.12,.12);try{r.start()}catch(e){got=1;cb(null,'start')}}
+const micMsg=e=>({'not-allowed':'Please allow the microphone when your browser asks, then try again.','service-not-allowed':'Please allow the microphone when your browser asks, then try again.','no-speech':'I did not hear anything. Tap the button, then speak.','audio-capture':'I cannot find a microphone on this device.','network':'Speech listening needs the internet. Please try again.'}[e]||'I could not hear you. Please try again, or tap an answer.');
+/* ---------- quiz: Next always visible, I don’t know, expressions ---------- */
+const IDK=['That’s okay! Not knowing is how every explorer starts. Let’s keep learning together.','Thank you for telling me honestly. We will practise this together, step by step.','Good thinking to be honest! The more we try, the stronger we grow.'];let QK=0;
+function quiz(list,w,box,prog,done){let i=0,sc=[];(function nx(){if(i>=list.length)return done(sc);const q=list[i],qk=++QK;let ans=0;prog.textContent='Question '+(i+1)+' of '+list.length;
+ const o=q.o.map((t,k)=>({t,c:k==0})).sort(()=>Math.random()-.5);o.push({t:'I don’t know',c:false,idk:1});
+ box.innerHTML='<p class="q">'+q.p+'</p><div class="opts">'+o.map((x,k)=>'<button class="opt'+(x.idk?' idk':'')+'" data-k="'+k+'">'+x.t+'</button>').join('')+'</div><p class="row" style="margin-top:14px">'+(SR?'<button class="b" id="dk" data-n="1" style="background:var(--clay);box-shadow:0 0 0 3px var(--clay),0 6px 0 #7d2a0c">Dictate your answer</button>':'')+'<button class="b" id="nq" data-v="Next question">'+(i+1>=list.length?'See my result':'Next question')+'</button></p>';
+ tell(w,q.sp?'Look at the picture. Which word is for it?':q.p,()=>{if(qk==QK&&!ans)tell(w,'What do you think is the answer?')});
+ $('#nq').onclick=()=>{if(!ans)sc.push(false);QK++;i++;nx()};
+ const pickOpt=bt=>{if(ans)return;ans=1;const x=o[bt.dataset.k];$$('#'+box.id+' .opt').forEach(z=>z.disabled=true);bt.classList.add('pk');say(x.t,w,()=>{if(qk!=QK)return;sc.push(x.c);sfx(x.c);setTimeout(()=>{if(qk!=QK)return;expr(w,x.c?'happy':'oops');if(x.c)jump(w);tell(w,x.c?pick(OK):x.idk?pick(IDK):pick(NO))},750)})};
+ $$('#'+box.id+' .opt').forEach(bt=>bt.onclick=()=>pickOpt(bt));
+ if($('#dk'))$('#dk').onclick=()=>{if(ans)return;$('#dk').textContent='Listening…';dict((trs,err)=>{if($('#dk'))$('#dk').textContent='Dictate your answer';if(!trs)return tell(w,micMsg(err));const k=o.findIndex(x=>matchOpt(trs,x.t));if(k<0)tell(w,'I did not catch that. Try again, or tap an answer.');else pickOpt($$('#'+box.id+' .opt')[k])})}})()}
+/* ---------- lesson player, tracing, practice ---------- */
+function tracing(s,a,next){const L=s.TR,lq=$('#lq');$('#lp').textContent='Tracing time with '+N[a];
+ lq.innerHTML='<p class="q">Trace the letter '+L+'</p><div class="trw"><canvas id="tg" width="300" height="300"></canvas><canvas id="td" width="300" height="300"></canvas></div><p class="row"><button class="b" id="tc" data-n="1">Check my tracing</button><button class="b" id="tx" data-v="Clear" style="background:var(--clay)">Clear</button><button class="b" id="ts" data-v="Skip">Skip</button></p>';
+ const g=$('#tg').getContext('2d'),d=$('#td').getContext('2d'),m=document.createElement('canvas');m.width=m.height=300;const mc=m.getContext('2d');
+ [g,mc].forEach(c=>{c.font='bold 250px Arial,Helvetica,sans-serif';c.textAlign='center';c.textBaseline='middle'});
+ mc.fillText(L,150,160);g.fillStyle='rgba(27,107,53,.13)';g.fillText(L,150,160);g.setLineDash([9,11]);g.lineWidth=4;g.strokeStyle='#1B6B35';g.strokeText(L,150,160);
+ d.lineWidth=26;d.lineCap=d.lineJoin='round';d.strokeStyle='rgba(200,72,26,.85)';let dr=0,lx,ly;const c=$('#td'),pt=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*300/r.width,(e.clientY-r.top)*300/r.height]};
+ c.onpointerdown=e=>{dr=1;[lx,ly]=pt(e);d.beginPath();d.moveTo(lx,ly);d.lineTo(lx+.1,ly);d.stroke();c.setPointerCapture(e.pointerId)};c.onpointermove=e=>{if(!dr)return;const[x,y]=pt(e);d.beginPath();d.moveTo(lx,ly);d.lineTo(x,y);d.stroke();lx=x;ly=y};c.onpointerup=c.onpointercancel=()=>dr=0;
+ tell(a,'Use your finger or mouse to trace the letter '+L+'. Go slowly along the dotted shape.');
+ $('#tx').onclick=()=>d.clearRect(0,0,300,300);$('#ts').onclick=()=>next();
+ $('#tc').onclick=()=>{const md=mc.getImageData(0,0,300,300).data,dd=d.getImageData(0,0,300,300).data;let inM=0,hit=0,drawn=0,out=0;for(let p=3;p<md.length;p+=12){const im=md[p]>128,dn=dd[p]>128;if(im)inM++;if(dn)drawn++;if(im&&dn)hit++;if(dn&&!im)out++}const cov=inM?hit/inM:0,over=drawn?out/drawn:1;
+  if(cov>.4&&over<.55){sfx(1);expr(a,'happy');jump(a);st.pts+=10;tell(a,'Beautiful tracing! Your letter '+L+' looks lovely.',()=>{$('#tc').outerHTML='<button class="b" id="tn" data-v="Continue">Continue</button>';$('#tn').onclick=()=>next()})}
+  else{sfx(0);expr(a,'oops');tell(a,cov<.4?'Nice try! Let’s trace a little more along the dotted line.':'Good effort! Try to stay closer to the dotted shape.')}}}
+const PRON=async(a,I,trs)=>{const r=await ai(pers(a)+'\nThe child tried to say the letter "'+I.L+'" (sound "'+I.snd+'", like in '+I.w1+'). A speech recogniser heard: '+JSON.stringify(trs)+'. It can be imperfect. Reply ONLY JSON {"ok":true or false,"say":"two short kid-friendly sentences: praise first, then one gentle tip about the mouth or tongue; never blame"}');try{return JSON.parse(r.match(/\{[\s\S]*\}/)[0])}catch(e){const ok=trs.some(t=>t.trim().charAt(0)==I.L.toLowerCase()||t.includes(I.w1));return{ok,say:ok?'Wonderful! I heard your '+I.L+' clearly. Keep that happy sound!':'Good try! Listen again: '+I.snd+'. Watch my mouth and try once more.'}}};
+function ensureAsk(){if($('#ask'))return;$('#s5').insertAdjacentHTML('beforeend','<div class="card" id="ask" style="margin-top:14px"><label for="ai" id="al"></label><div class="row"><input id="ai" class="in" maxlength="120" placeholder="Type your question"><button class="b" id="ab" data-n="1">Ask</button></div></div>');$('#ab').onclick=async()=>{const q=$('#ai').value.trim();if(!q)return;const a2=$('#lb').dataset.a;tell(a2,'Let me think…');const r=await ai(pers(a2)+'\nThe child asks: "'+q.slice(0,150)+'"\nAnswer helpfully in at most 3 short sentences. If it is not about learning or this app, gently steer back to the lesson.');tell(a2,r||'I need my thinking power to answer that, but let’s keep learning together!')}}
+let LT=0;
+function lesson(i){clearInterval(LT);const S0=SEC[i],a=S0.a,n=st.ls[i]%S0.LS.length,s=S0.LS[n],lq=$('#lq'),T=s.T,D=T.map(x=>Math.max(4,x.length*.075+1.2)),tot=D.reduce((x,y)=>x+y,0);
+ setA($('#la'),a);$('#lb').dataset.a=a;show('s5',a);ensureAsk();$('#al').textContent='Ask '+N[a]+' a question';
+ let k=0,pl=1,ts=0,wait=0,qid=0;const fmt=x=>Math.floor(x/60)+':'+String(Math.floor(x%60)).padStart(2,'0'),bef=()=>D.slice(0,k).reduce((x,y)=>x+y,0);
+ $('#lp').textContent='Lesson '+(n+1)+': '+s.title;
+ lq.innerHTML='<div id="gx"></div><div class="vbar"><i id="vb2"></i></div><div class="row" style="justify-content:space-between"><span class="prog" id="vtm"></span><span class="prog" id="vsc"></span></div><p class="row"><button class="b" id="vpl" data-n="1">Pause</button><button class="b" id="vnx" data-v="Next">Next</button></p><div id="vresp"></div>';
+ const upd=()=>{const e=Math.min(tot,bef()+Math.min(ts,D[k]||0));$('#vb2').style.width=(e/tot*100)+'%';$('#vtm').textContent=fmt(e)+' / '+fmt(tot);$('#vsc').textContent='Part '+Math.min(k+1,T.length)+' of '+T.length};
+ LT=setInterval(()=>{if(pl&&!wait){ts+=.25;upd()}},250);
+ const practice=()=>{clearInterval(LT);$('#lp').textContent='Practice time with '+N[a];lq.innerHTML='<p class="q"></p><div class="row"><input id="pi" class="in" maxlength="120" aria-label="Your answer"><button class="b" id="pd" data-n="1" style="background:var(--clay)">Dictate</button><button class="b" id="ps" data-n="1">Check with '+N[a]+'</button></div><p id="pf"></p>';lq.querySelector('.q').textContent=s.P;tell(a,'Now it’s your turn! '+s.P);
+  if(SR)$('#pd').onclick=()=>dict((t,e)=>{if(t)$('#pi').value=t[0].replace(/\.$/,'');else tell(a,micMsg(e))});else $('#pd').remove();
+  $('#ps').onclick=async()=>{const txt=$('#pi').value.trim();if(!txt)return;$('#ps').disabled=true;tell(a,'Let me look…');const r=await ai(pers(a)+'\nTask: "'+s.P+'"\nThe child wrote: "'+txt.slice(0,200)+'"\nDecide if the child did the task reasonably (ignore spelling slips). Reply ONLY JSON: {"ok":true or false,"say":"your warm spoken reply, max 2 short sentences"}');let j;try{j=JSON.parse(r.match(/\{[\s\S]*\}/)[0])}catch(e){const ok=s.chk(txt);j={ok,say:ok?'Lovely work! You did it.':'Good try! Let’s have another go, you are growing stronger.'}}
+   sfx(j.ok);expr(a,j.ok?'happy':'oops');if(j.ok){st.pts+=10;jump(a)}$('#ps').disabled=false;tell(a,String(j.say||'Great trying!'),()=>{if(!$('#pc')){$('#pf').innerHTML='<button class="b" id="pc" data-v="Continue">Continue to questions</button>';$('#pc').onclick=()=>{lq.innerHTML='';quiz(s.K,a,lq,$('#lp'),r2=>finish(i,r2))}}})}};
+ const end=()=>{clearInterval(LT);s.TR?tracing(s,a,practice):practice()};
+ const adv=my=>setTimeout(()=>{if(my!=qid||!pl)return;k++;if(k>=T.length)end();else go()},500);
+ const go=()=>{const my=++qid;ts=0;wait=0;upd();if(!$('#vresp'))return;$('#vresp').innerHTML='';$('#gx').innerHTML=gfx(s.G,k);const m=T[k].match(/Can you say ([A-Za-z])\?/i);tell(a,T[k],()=>{if(my!=qid||!pl)return;if(m&&s.LI&&SR)ask(my);else adv(my)})};
+ const ask=my=>{wait=1;$('#vresp').innerHTML='<p class="row"><button class="b" id="vsay" data-n="1" style="background:var(--clay)">Press and say it!</button><button class="b" id="vsk" data-v="Skip">Skip</button></p><p id="vfb" class="prog"></p>';
+  $('#vsk').onclick=()=>{wait=0;$('#vresp').innerHTML='';adv(my)};
+  $('#vsay').onclick=()=>{$('#vsay').textContent='Listening…';dict(async(trs,err)=>{if($('#vsay'))$('#vsay').textContent='Press and say it!';if(!trs)return tell(a,micMsg(err));$('#vfb').textContent='I heard: '+trs[0];tell(a,'Let me listen again to what I heard…');const j=await PRON(a,s.LI,trs);sfx(j.ok);expr(a,j.ok?'happy':'oops');if(j.ok)st.pts+=5;tell(a,String(j.say),()=>{if(my!=qid)return;$('#vresp').innerHTML='<p class="row"><button class="b" id="vtry" data-n="1" style="background:var(--clay)">Try again</button><button class="b" id="vok" data-v="Continue">Continue</button></p>';$('#vok').onclick=()=>{wait=0;$('#vresp').innerHTML='';adv(my)};$('#vtry').onclick=()=>ask(my)})})}};
+ $('#vpl').onclick=()=>{if(pl){pl=0;vstop();$('#vpl').textContent='Play'}else{pl=1;$('#vpl').textContent='Pause';if(!wait)go()}};
+ $('#vnx').onclick=()=>{qid++;vstop();pl=1;wait=0;$('#vpl').textContent='Pause';k++;if(k>=T.length)end();else go()};
+ go()}
+/* ---------- section map, camp, saving ---------- */
+secmap=function(i){$('#mb').dataset.a=SEC[i].a;_sm(i);const S=SEC[i],n=st.ls[i],T=S.LS.length,a=S.a,sts=S.st;
+ $('#mm').innerHTML='<ol>'+S.L.map((l,k)=>{const b=sts[k],e=sts[k+1]==null?T:sts[k+1],soon=b>=T,dn=!soon&&n>=e,cu=!soon&&n>=b&&n<e;return `<li${!dn&&!cu?' style="opacity:.6"':''}><i>${dn?'✓':k+1}</i>${l}${dn?' — done':cu?' — lesson '+(n+1)+' of '+T:soon?' — coming soon':''}</li>`}).join('')+`<li class="t"><i>★</i>${S.Q}</li></ol>`;
+ $('#go4').textContent=n>=T?'Learn again':'Start lesson '+(n+1);$('#nl').style.display=n>=T&&i<2?'':'none';
+ if(n>0)tell(a,n>=T?'You finished all my lessons for now! Learn again, or visit the next land.':'Wonderful work! Lesson '+(n+1)+' is ready when you are.')};
+const _show=show;show=function(id,w){_show(id,w);$('#hm').style.display=id=='s0'?'none':''};
+$('#hm').onclick=()=>{vstop();clearInterval(LT);$('#vid').classList.remove('on');SG++;show('s0','lion')};
+const KEY='kenyai1';try{const sv=JSON.parse(localStorage.getItem(KEY)||'null');if(sv)Object.assign(st,sv)}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({eggs:st.eggs,pts:st.pts,sec:st.sec,done:st.done,fq:st.fq,ls:st.ls}))}catch(e){}};setInterval(save,2000);addEventListener('pagehide',save);document.addEventListener('visibilitychange',save);eggsUI();
+if(st.done>0){$('#go0').insertAdjacentHTML('afterend',' <button class="b" id="cont" data-v="Continue my journey" style="background:var(--clay);box-shadow:0 0 0 3px var(--clay),0 6px 0 #7d2a0c">Continue my journey</button>');$('#cont').onclick=()=>secmap(st.sec)}
+$$('.an').forEach(e=>e.innerHTML='');paint();
+</script></body></html>
